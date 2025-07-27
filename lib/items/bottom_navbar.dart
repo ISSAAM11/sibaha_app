@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sibaha_app/items/navbar_button.dart';
 
 class BottomNavbar extends StatelessWidget {
@@ -38,7 +39,7 @@ class BottomNavbar extends StatelessWidget {
             icon: Icons.person_outline,
             label: 'Account',
             isActive: false,
-            onTap: () => print('Account pressed'),
+            onTap: () => context.go("/UserDetails"),
           ),
         ],
       ),

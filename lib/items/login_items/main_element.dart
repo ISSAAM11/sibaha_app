@@ -40,8 +40,6 @@ class MainElement extends StatelessWidget {
                 ],
               ),
             ),
-
-            // Email TextField
             Container(
               margin: EdgeInsets.only(bottom: 16.0),
               child: TextField(
@@ -61,8 +59,6 @@ class MainElement extends StatelessWidget {
                 ),
               ),
             ),
-
-            // Password TextField
             Container(
               margin: EdgeInsets.only(bottom: 24.0),
               child: TextField(
@@ -82,7 +78,6 @@ class MainElement extends StatelessWidget {
                 ),
               ),
             ),
-
             Container(
               alignment: Alignment.centerRight,
               margin: EdgeInsets.only(bottom: 24.0),
@@ -99,8 +94,6 @@ class MainElement extends StatelessWidget {
                 ),
               ),
             ),
-
-            // Login Button
             Container(
               height: 50,
               margin: EdgeInsets.only(bottom: 16.0),
@@ -135,8 +128,6 @@ class MainElement extends StatelessWidget {
                 ),
               ),
             ),
-
-            // Sign Up Link
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

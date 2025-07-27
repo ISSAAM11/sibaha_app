@@ -7,8 +7,7 @@ class MainElement extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-        child: Column(
+    return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Container(
@@ -123,6 +122,7 @@ class MainElement extends StatelessWidget {
                   filled: true,
                   fillColor: Colors.grey[50],
                 ),
+                onSubmitted: (value) => context.go('/AcademysList'),
               ),
               SizedBox(height: 15),
               Container(
@@ -263,6 +263,6 @@ class MainElement extends StatelessWidget {
           ]),
         ),
       ],
-    ));
+    );
   }
 }
