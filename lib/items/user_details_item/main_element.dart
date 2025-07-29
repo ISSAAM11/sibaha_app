@@ -10,7 +10,7 @@ class MainElement extends StatelessWidget {
       body: Column(
         children: [
           Container(
-            height: 200,
+            height: 250,
             decoration: BoxDecoration(
               color: Colors.blue,
               borderRadius: BorderRadius.only(
@@ -93,7 +93,7 @@ class MainElement extends StatelessWidget {
                           SizedBox(height: 15),
                           _buildMenuItem(
                             title: 'My information',
-                            onTap: () => context.push('/UserDetails'),
+                            onTap: () => context.push('/UserInformation'),
                           ),
                           _buildMenuItem(
                             title: 'My information',

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class UserInformation extends StatelessWidget {
   const UserInformation({super.key});
@@ -9,7 +10,7 @@ class UserInformation extends StatelessWidget {
       body: Column(
         children: [
           Container(
-            height: 320,
+            height: 280,
             decoration: BoxDecoration(
               color: Colors.blue,
               borderRadius: BorderRadius.only(
@@ -21,11 +22,11 @@ class UserInformation extends StatelessWidget {
               child: Column(
                 children: [
                   Padding(
-                    padding: EdgeInsets.all(16),
+                    padding: EdgeInsets.all(8),
                     child: Align(
                       alignment: Alignment.topLeft,
                       child: GestureDetector(
-                        onTap: () => print('Back pressed'),
+                        onTap: () => context.pop(),
                         child: Container(
                           padding: EdgeInsets.all(8),
                           decoration: BoxDecoration(
@@ -80,19 +81,19 @@ class UserInformation extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(height: 8),
+                          SizedBox(height: 6),
                           Text(
                             'Specialities: kids',
                             style: TextStyle(
                               color: Colors.white70,
-                              fontSize: 16,
+                              fontSize: 12,
                             ),
                           ),
                           Text(
                             'English, Italien',
                             style: TextStyle(
                               color: Colors.white70,
-                              fontSize: 16,
+                              fontSize: 12,
                             ),
                           ),
                         ],
