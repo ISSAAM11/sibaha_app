@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sibaha_app/blocs/academy_bloc/academy_bloc.dart';
 import 'package:sibaha_app/items/academy_list_items/academy_item.dart';
-import 'package:sibaha_app/items/bottom_navbar.dart';
-import 'package:sibaha_app/items/navbar_button.dart';
 
 class MainElement extends StatelessWidget {
+  const MainElement({super.key});
+
   @override
   Widget build(BuildContext context) {
+    final academyBloc = BlocProvider.of<AcademyBloc>(context);
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
@@ -116,11 +120,37 @@ class MainElement extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              padding: EdgeInsets.all(16),
-              itemCount: 6,
-              itemBuilder: (context, index) {
-                return AcatemyItem(index: index);
+            child: BlocBuilder<AcademyBloc, AcademyState>(
+              builder: (context, state) {
+                if (state is AcademyInitial) {
+                  academyBloc.add(FetchAcademies('token'));
+                  return const Expanded(
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                } else if (state is AcademyFailed) {
+                  return Expanded(
+                    child: Center(
+                        child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 30),
+                      child: Text(state.message),
+                    )),
+                  );
+                }
+                if (state is AcademyLoaded) {
+                  return ListView.builder(
+                    padding: EdgeInsets.all(16),
+                    itemCount: state.academies.length,
+                    itemBuilder: (context, index) {
+                      return AcatemyItem(
+                        index: index,
+                        academy: state.academies[index],
+                      );
+                    },
+                  );
+                }
+                return SizedBox();
               },
             ),
           ),

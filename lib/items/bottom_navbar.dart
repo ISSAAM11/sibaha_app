@@ -27,7 +27,7 @@ class BottomNavbar extends StatelessWidget {
             icon: Icons.search,
             label: 'Search',
             isActive: true,
-            onTap: () => print('Search pressed'),
+            onTap: () => context.go("/home"),
           ),
           NavbarButton(
             icon: Icons.favorite_border,

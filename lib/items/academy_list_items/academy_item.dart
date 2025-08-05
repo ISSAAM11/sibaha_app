@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sibaha_app/Model/academy.dart';
 import 'package:sibaha_app/utils/static_data.dart';
 
 class AcatemyItem extends StatelessWidget {
   final int index;
-  const AcatemyItem({super.key, required this.index});
+  final Academy academy;
+  const AcatemyItem({super.key, required this.index, required this.academy});
 
   @override
   Widget build(BuildContext context) {
-    final academy = academies[index % academies.length];
+    final thisAcademy = academies[index % academies.length];
 
     return GestureDetector(
       onTap: () {
-        context.push("/AcademyDetails");
+        context.push("/AcademyDetails/${academy.id}");
       },
       child: Container(
         margin: EdgeInsets.only(bottom: 16),
@@ -24,7 +26,7 @@ class AcatemyItem extends StatelessWidget {
               Container(
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: NetworkImage(academy['image']),
+                    image: NetworkImage(academy.image),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -56,7 +58,7 @@ class AcatemyItem extends StatelessWidget {
                       Icon(Icons.star, color: Colors.yellow, size: 14),
                       SizedBox(width: 4),
                       Text(
-                        '${academy['rating']} (${academy['reviewCount']})',
+                        '${thisAcademy['rating']} (${thisAcademy['reviewCount']})',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 12,
@@ -76,7 +78,7 @@ class AcatemyItem extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        academy['name'],
+                        academy.name,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 20,
@@ -85,7 +87,7 @@ class AcatemyItem extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      academy['location'],
+                      academy.city,
                       style: TextStyle(
                         color: Colors.white70,
                         fontSize: 14,

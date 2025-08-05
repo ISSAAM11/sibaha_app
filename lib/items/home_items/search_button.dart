@@ -17,21 +17,23 @@ class SearchButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 90,
-        padding: EdgeInsets.symmetric(vertical: 15),
+        width: 75,
+        height: 75,
+        alignment: Alignment.center,
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.9),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 28, color: Colors.blue),
-            SizedBox(height: 8),
+            Icon(icon, size: 23, color: Colors.blue),
+            SizedBox(height: 5),
             Text(
               label,
               style: TextStyle(
                 color: Colors.black87,
-                fontSize: 14,
+                fontSize: 12,
                 fontWeight: FontWeight.w500,
               ),
             ),

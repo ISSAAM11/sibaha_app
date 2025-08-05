@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sibaha_app/blocs/bloc/auth_bloc_bloc.dart';
+import 'package:sibaha_app/blocs/academy_bloc/academy_bloc.dart';
+import 'package:sibaha_app/blocs/auth_bloc/auth_bloc_bloc.dart';
+import 'package:sibaha_app/blocs/bloc/academy_details_bloc.dart';
 import 'package:sibaha_app/screens/initial_screen.dart';
 
 void main() {
@@ -24,6 +26,12 @@ class MyApp extends StatelessWidget {
           providers: [
             BlocProvider(
               create: (context) => AuthBlocBloc(),
+            ),
+            BlocProvider(
+              create: (context) => AcademyBloc(),
+            ),
+            BlocProvider(
+              create: (context) => AcademyDetailsBloc(),
             )
           ],
           child: InitialScreen(),

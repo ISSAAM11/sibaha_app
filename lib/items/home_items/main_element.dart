@@ -11,7 +11,7 @@ class MainElement extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
       Container(
-        height: 300,
+        height: 270,
         decoration: BoxDecoration(
           image: DecorationImage(
             image: NetworkImage(
@@ -33,73 +33,68 @@ class MainElement extends StatelessWidget {
           child: SafeArea(
               child: Padding(
             padding: EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 20),
-                Text(
-                  'Welcome Username',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                  ),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              SizedBox(height: 20),
+              Text(
+                'Welcome Username',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
                 ),
-                SizedBox(height: 8),
-                Text(
-                  'Start your swimming courses',
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 16,
-                  ),
+              ),
+              SizedBox(height: 8),
+              Text(
+                'Start your swimming courses',
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: 15,
                 ),
-                SizedBox(height: 30),
-                Text(
-                  'Search By',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
+              ),
+              SizedBox(height: 25),
+              Text(
+                'Search By',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
                 ),
-                SizedBox(height: 15),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    SearchButton(
-                      icon: Icons.pool,
-                      label: 'Pool',
-                      onTap: () => context.go('/AcademysList'),
-                    ),
-                    SearchButton(
-                      icon: Icons.school,
-                      label: 'Academy',
-                      onTap: () => print('Academy pressed'),
-                    ),
-                    SearchButton(
-                      icon: Icons.person,
-                      label: 'Coach',
-                      onTap: () => print('Coach pressed'),
-                    ),
-                  ],
+              ),
+              SizedBox(height: 15),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+                SearchButton(
+                  icon: Icons.pool,
+                  label: 'Pool',
+                  onTap: () => context.go('/AcademysList'),
                 ),
-              ],
-            ),
+                SearchButton(
+                  icon: Icons.school,
+                  label: 'Academy',
+                  onTap: () => print('Academy pressed'),
+                ),
+                SearchButton(
+                  icon: Icons.person,
+                  label: 'Coach',
+                  onTap: () => print('Coach pressed'),
+                ),
+              ]),
+            ]),
           )),
         ),
       ),
       Padding(
-        padding: EdgeInsets.all(20),
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Text(
             'Your city',
             style: TextStyle(
-              fontSize: 20,
+              fontSize: 18,
               fontWeight: FontWeight.bold,
               color: Colors.black87,
             ),
           ),
-          SizedBox(height: 15),
+          SizedBox(height: 10),
           TextField(
             decoration: InputDecoration(
               hintText: 'Search',
@@ -124,9 +119,9 @@ class MainElement extends StatelessWidget {
               scaffoldKey.currentState?.openDrawer();
             },
           ),
-          SizedBox(height: 15),
+          SizedBox(height: 10),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
             decoration: BoxDecoration(
               color: Colors.grey[100],
               borderRadius: BorderRadius.circular(20),
@@ -139,7 +134,7 @@ class MainElement extends StatelessWidget {
                 'Near to me',
                 style: TextStyle(
                   color: Colors.black87,
-                  fontSize: 14,
+                  fontSize: 13,
                 ),
               ),
             ]),
@@ -148,113 +143,116 @@ class MainElement extends StatelessWidget {
       ),
       Container(
         color: Colors.grey[100],
-        padding: EdgeInsets.all(10),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(
-            'Popular Academies',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
-          ),
-          SizedBox(height: 15),
-          Container(
-            height: 150,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: 5,
-              itemBuilder: (context, index) {
-                return Container(
-                  width: 200,
-                  margin: EdgeInsets.only(right: 15),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Stack(children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: NetworkImage(index % 2 == 0
-                                ? 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop'
-                                : 'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=400&h=300&fit=crop'),
-                            fit: BoxFit.cover,
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 5,
+            children: [
+              Text(
+                'Popular Academies',
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              Container(
+                height: 150,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 5,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      width: 200,
+                      margin: EdgeInsets.only(right: 15),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Stack(children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: NetworkImage(index % 2 == 0
+                                    ? 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop'
+                                    : 'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=400&h=300&fit=crop'),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Colors.transparent,
-                              Colors.black.withOpacity(0.7),
-                            ],
+                          Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Colors.transparent,
+                                  Colors.black.withOpacity(0.7),
+                                ],
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                      Positioned(
-                        top: 10,
-                        right: 10,
-                        child: Container(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.6),
-                            borderRadius: BorderRadius.circular(12),
+                          Positioned(
+                            top: 10,
+                            right: 10,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.6),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.star,
+                                      color: Colors.yellow, size: 14),
+                                  SizedBox(width: 4),
+                                  Text(
+                                    '4.5',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.star, color: Colors.yellow, size: 14),
-                              SizedBox(width: 4),
-                              Text(
-                                '4.5',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
+                          Positioned(
+                            bottom: 15,
+                            left: 15,
+                            right: 15,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  index % 2 == 0
+                                      ? 'Academy Sports'
+                                      : 'Pool Academy',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                            ],
+                                SizedBox(height: 4),
+                                Text(
+                                  'Swimming • Fitness',
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
+                        ]),
                       ),
-                      Positioned(
-                        bottom: 15,
-                        left: 15,
-                        right: 15,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              index % 2 == 0
-                                  ? 'Academy Sports'
-                                  : 'Pool Academy',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(height: 4),
-                            Text(
-                              'Swimming • Fitness',
-                              style: TextStyle(
-                                color: Colors.white70,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ]),
-                  ),
-                );
-              },
-            ),
-          ),
-        ]),
+                    );
+                  },
+                ),
+              ),
+            ]),
       ),
     ]);
   }

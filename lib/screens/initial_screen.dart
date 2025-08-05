@@ -36,9 +36,11 @@ class _InitialScreenState extends State<InitialScreen> {
             NoTransitionPage(child: AcademysScreen()),
       ),
       GoRoute(
-        path: '/AcademyDetails',
-        pageBuilder: (context, state) =>
-            NoTransitionPage(child: AcademyDetails()),
+        path: '/AcademyDetails/:id',
+        pageBuilder: (context, state) {
+          final id = state.pathParameters["id"]!;
+          return NoTransitionPage(child: AcademyDetails(id: int.parse(id)));
+        },
       ),
       GoRoute(
         path: '/AcademyCoachs',
