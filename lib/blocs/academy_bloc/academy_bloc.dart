@@ -18,7 +18,8 @@ class AcademyBloc extends Bloc<AcademyEvent, AcademyState> {
       FetchAcademies event, Emitter<AcademyState> emit) async {
     emit(AcademyLoading());
     try {
-      List<Academy> academies = await academyService.fetchAcademies();
+      List<Academy> academies =
+          await academyService.fetchAcademies(event.token);
       academyData = academies;
       emit(AcademyLoaded(academyData));
     } catch (e) {

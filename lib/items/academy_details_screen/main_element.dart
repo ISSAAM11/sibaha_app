@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sibaha_app/blocs/bloc/academy_details_bloc.dart';
+import 'package:sibaha_app/blocs/academy_details_bloc/academy_details_bloc.dart';
 import 'package:sibaha_app/items/academy_details_screen/day_schedule.dart';
 
 class MainElement extends StatelessWidget {

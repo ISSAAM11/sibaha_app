@@ -20,7 +20,8 @@ class AcademyDetailsBloc
     try {
       Academy academyDetailsData;
 
-      Academy academy = await academyService.fetchAcademyDetails(event.id);
+      Academy academy =
+          await academyService.fetchAcademyDetails(event.token, event.id);
       academyDetailsData = academy;
       emit(AcademyDetailsLoaded(academyDetailsData));
     } catch (e) {

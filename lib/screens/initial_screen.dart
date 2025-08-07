@@ -1,7 +1,9 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sibaha_app/blocs/auth_bloc/auth_bloc_bloc.dart';
 import 'package:sibaha_app/screens/academy_details.dart';
 import 'package:sibaha_app/screens/academys_coach_screen.dart';
 import 'package:sibaha_app/screens/academys_screen.dart';
@@ -19,6 +21,21 @@ class InitialScreen extends StatefulWidget {
 }
 
 class _InitialScreenState extends State<InitialScreen> {
+  bool _isInitialized = false;
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isInitialized) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final authBloc = context.read<AuthBloc>();
+        if (authBloc.state is AuthInitial) {
+          authBloc.add(AutoAuthEvent());
+        }
+      });
+      _isInitialized = true;
+    }
+  }
+
   final GoRouter _router = GoRouter(
     initialLocation: '/home',
     routes: <RouteBase>[
@@ -30,38 +47,38 @@ class _InitialScreenState extends State<InitialScreen> {
         path: '/login',
         pageBuilder: (context, state) => NoTransitionPage(child: LoginScreen()),
       ),
-      GoRoute(
-        path: '/AcademysList',
-        pageBuilder: (context, state) =>
-            NoTransitionPage(child: AcademysScreen()),
-      ),
-      GoRoute(
-        path: '/AcademyDetails/:id',
-        pageBuilder: (context, state) {
-          final id = state.pathParameters["id"]!;
-          return NoTransitionPage(child: AcademyDetails(id: int.parse(id)));
-        },
-      ),
-      GoRoute(
-        path: '/AcademyCoachs',
-        pageBuilder: (context, state) =>
-            NoTransitionPage(child: AcademysCoachsScreen()),
-      ),
-      GoRoute(
-        path: '/ReviewList',
-        pageBuilder: (context, state) =>
-            NoTransitionPage(child: AcademyReviewScreen()),
-      ),
-      GoRoute(
-        path: '/UserDetails',
-        pageBuilder: (context, state) =>
-            NoTransitionPage(child: UserDetailsScreen()),
-      ),
-      GoRoute(
-        path: '/UserInformation',
-        pageBuilder: (context, state) =>
-            NoTransitionPage(child: UserInformationScreen()),
-      ),
+      // GoRoute(
+      //   path: '/AcademysList',
+      //   pageBuilder: (context, state) =>
+      //       NoTransitionPage(child: AcademysScreen()),
+      // ),
+      // GoRoute(
+      //   path: '/AcademyDetails/:id',
+      //   pageBuilder: (context, state) {
+      //     final id = state.pathParameters["id"]!;
+      //     return NoTransitionPage(child: AcademyDetails(id: int.parse(id)));
+      //   },
+      // ),
+      // GoRoute(
+      //   path: '/AcademyCoachs',
+      //   pageBuilder: (context, state) =>
+      //       NoTransitionPage(child: AcademysCoachsScreen()),
+      // ),
+      // GoRoute(
+      //   path: '/ReviewList',
+      //   pageBuilder: (context, state) =>
+      //       NoTransitionPage(child: AcademyReviewScreen()),
+      // ),
+      // GoRoute(
+      //   path: '/UserDetails',
+      //   pageBuilder: (context, state) =>
+      //       NoTransitionPage(child: UserDetailsScreen()),
+      // ),
+      // GoRoute(
+      //   path: '/UserInformation',
+      //   pageBuilder: (context, state) =>
+      //       NoTransitionPage(child: UserInformationScreen()),
+      // ),
     ],
   );
 

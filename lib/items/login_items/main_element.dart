@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sibaha_app/blocs/auth_bloc/auth_bloc_bloc.dart';
 
 class MainElement extends StatelessWidget {
   MainElement({super.key});
@@ -8,6 +9,8 @@ class MainElement extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authbloc = BlocProvider.of<AuthBloc>(context);
+
     return Center(
       child: SingleChildScrollView(
         padding: EdgeInsets.all(24.0),
@@ -101,15 +104,14 @@ class MainElement extends StatelessWidget {
                 onPressed: () {
                   String email = emailController.text;
                   String password = passwordController.text;
+                  authbloc.add(LoginEvent(email, password));
 
-                  context.go('/home');
-
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Login attempted with $email'),
-                      backgroundColor: Colors.green,
-                    ),
-                  );
+                  //               ScaffoldMessenger.of(context).showSnackBar(
+                  //   SnackBar(
+                  //     content: Text('Login attempted with $email'),
+                  //     backgroundColor: Colors.green,
+                  //   ),
+                  // );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,

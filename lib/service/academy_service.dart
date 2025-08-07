@@ -4,15 +4,13 @@ import 'package:sibaha_app/utils/exceptions.dart';
 import 'package:sibaha_app/utils/server_config.dart';
 
 class AcademyService {
-  final token = "";
-  Future<List<Academy>> fetchAcademies() async {
+  Future<List<Academy>> fetchAcademies(String token) async {
     final url = Uri.parse("$httpServerPath/academy/");
     try {
       final Dio dio = Dio();
       final response = await dio.getUri(url,
           options: Options(headers: {'Authorization': 'Bearer $token'}));
       handleNoDataReceivedException(response);
-      print(response.data["data"]);
       try {
         final departments = (response.data["data"] as List)
             .map((e) => Academy.fromJson(e))
@@ -31,7 +29,7 @@ class AcademyService {
     }
   }
 
-  Future<Academy> fetchAcademyDetails(int academyId) async {
+  Future<Academy> fetchAcademyDetails(String token, int academyId) async {
     final url = Uri.parse("$httpServerPath/academy/$academyId");
     try {
       final Dio dio = Dio();
