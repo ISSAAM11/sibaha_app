@@ -21,11 +21,9 @@ class DaySchedule extends StatelessWidget {
             ),
           ),
           SizedBox(width: 12),
-          Text(day,
-              style: TextStyle(fontSize: 16, color: Colors.black87)),
+          Text(day, style: TextStyle(fontSize: 16, color: Colors.black87)),
           Spacer(),
-          Text(time,
-              style: TextStyle(fontSize: 16, color: Colors.black87)),
+          Text(time, style: TextStyle(fontSize: 16, color: Colors.black87)),
         ],
       ),
     );

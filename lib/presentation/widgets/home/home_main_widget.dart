@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sibaha_app/presentation/blocs/auth_bloc/auth_bloc.dart';
 import 'package:sibaha_app/presentation/blocs/token_bloc/token_bloc.dart';
 import 'package:sibaha_app/presentation/widgets/home/search_button.dart';
 
@@ -12,24 +11,9 @@ class HomeMainWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokenBloc = BlocProvider.of<TokenBloc>(context);
+    final tokenState = context.read<TokenBloc>().state as TokenRetrieved;
 
-    return BlocBuilder<TokenBloc, TokenState>(builder: (context, tokenState) {
-      if (tokenState is TokenExpired) {
-        return const Center(child: CircularProgressIndicator());
-      }
-      if (tokenState is TokenInitial) {
-        tokenBloc.add(TokenFetch());
-        return const Center(child: CircularProgressIndicator());
-      }
-      if (tokenState is TokenNotFound) {
-        WidgetsBinding.instance.addPostFrameCallback(
-          (_) => BlocProvider.of<AuthBloc>(context).add(LogoutEvent()),
-        );
-        return const Center(child: CircularProgressIndicator());
-      }
-      if (tokenState is TokenRetrieved) {
-        return Column(
+    return Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
@@ -96,12 +80,12 @@ class HomeMainWidget extends StatelessWidget {
                                 SearchButton(
                                   icon: Icons.school,
                                   label: 'Academy',
-                                  onTap: () {},
+                                  onTap: () => context.go('/AcademysList'),
                                 ),
                                 SearchButton(
                                   icon: Icons.person,
                                   label: 'Coach',
-                                  onTap: () {},
+                                  onTap: () => context.go('/CoachesList'),
                                 ),
                               ]),
                         ]),
@@ -276,8 +260,5 @@ class HomeMainWidget extends StatelessWidget {
                     ]),
               ),
             ]);
-      }
-      return SizedBox();
-    });
   }
 }

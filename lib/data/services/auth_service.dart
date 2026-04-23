@@ -92,12 +92,14 @@ class AuthService {
       storedData = json.decode(userDataString) as Map;
     } catch (_) {
       await storage.delete(key: 'userData');
-      throw TokenExpiredException('Session data is corrupted, please log in again');
+      throw TokenExpiredException(
+          'Session data is corrupted, please log in again');
     }
 
     final storedRefreshToken = storedData['refresh_token'] as String?;
     if (storedRefreshToken == null) {
-      throw TokenExpiredException('No refresh token found, please log in again');
+      throw TokenExpiredException(
+          'No refresh token found, please log in again');
     }
 
     try {
@@ -126,7 +128,11 @@ class AuthService {
       });
       await refreshStorage.write(key: 'userData', value: newUserData);
 
-      return (accessToken, user['username'] as String?, user['user_type'] as String?);
+      return (
+        accessToken,
+        user['username'] as String?,
+        user['user_type'] as String?
+      );
     } catch (e) {
       if (e is AppException) rethrow;
       throw TokenExpiredException('Failed to refresh token: ${e.toString()}');

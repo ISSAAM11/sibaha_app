@@ -18,3 +18,5 @@ class AcademyFailed extends AcademyState {
 
   AcademyFailed(this.message);
 }
+
+class AcademyTokenExpired extends AcademyState {}

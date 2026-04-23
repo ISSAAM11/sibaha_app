@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:sibaha_app/core/exceptions/app_exceptions.dart';
 import 'package:sibaha_app/data/models/academy.dart';
 import 'package:sibaha_app/data/repositories/academy_repository.dart';
 
@@ -23,6 +24,8 @@ class AcademyDetailsBloc
       final academy =
           await _academyRepository.getAcademyDetails(event.token, event.id);
       emit(AcademyDetailsLoaded(academy));
+    } on TokenExpiredException {
+      emit(AcademyDetailsTokenExpired());
     } catch (e) {
       emit(AcademyDetailsFailed(e.toString()));
     }

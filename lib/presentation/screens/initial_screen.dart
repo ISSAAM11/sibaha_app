@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sibaha_app/presentation/blocs/auth_bloc/auth_bloc.dart';
+import 'package:sibaha_app/presentation/blocs/token_bloc/token_bloc.dart';
 import 'package:sibaha_app/presentation/screens/academy_coaches_screen.dart';
 import 'package:sibaha_app/presentation/screens/academy_details_screen.dart';
 import 'package:sibaha_app/presentation/screens/academies_screen.dart';
@@ -10,6 +11,7 @@ import 'package:sibaha_app/presentation/screens/login_screen.dart';
 import 'package:sibaha_app/presentation/screens/review_screen.dart';
 import 'package:sibaha_app/presentation/screens/user/user_details_screen.dart';
 import 'package:sibaha_app/presentation/screens/user/user_information_screen.dart';
+import 'package:sibaha_app/presentation/widgets/token_gate.dart';
 
 class InitialScreen extends StatefulWidget {
   const InitialScreen({super.key});
@@ -40,7 +42,8 @@ class _InitialScreenState extends State<InitialScreen> {
     routes: <RouteBase>[
       GoRoute(
         path: '/home',
-        pageBuilder: (context, state) => NoTransitionPage(child: HomeScreen()),
+        pageBuilder: (context, state) =>
+            NoTransitionPage(child: TokenGate(child: HomeScreen())),
       ),
       GoRoute(
         path: '/login',
@@ -50,39 +53,40 @@ class _InitialScreenState extends State<InitialScreen> {
       GoRoute(
         path: '/AcademysList',
         pageBuilder: (context, state) =>
-            NoTransitionPage(child: AcademiesScreen()),
+            NoTransitionPage(child: TokenGate(child: AcademiesScreen())),
       ),
       GoRoute(
         path: '/AcademyDetails/:id',
         pageBuilder: (context, state) {
-          final id = state.pathParameters["id"]!;
+          final id = int.parse(state.pathParameters["id"]!);
           return NoTransitionPage(
-              child: AcademyDetailsScreen(id: int.parse(id)));
+              child: TokenGate(child: AcademyDetailsScreen(id: id)));
         },
       ),
       GoRoute(
         path: '/AcademyCoachs',
         pageBuilder: (context, state) =>
-            NoTransitionPage(child: AcademyCoachesScreen()),
+            NoTransitionPage(child: TokenGate(child: AcademyCoachesScreen())),
       ),
       GoRoute(
         path: '/ReviewList',
         pageBuilder: (context, state) =>
-            NoTransitionPage(child: ReviewScreen()),
+            NoTransitionPage(child: TokenGate(child: ReviewScreen())),
       ),
       GoRoute(
         path: '/UserDetails/:interface',
         pageBuilder: (context, state) {
           final interface = state.pathParameters["interface"]!;
           return NoTransitionPage(
-              child: UserDetailsScreen(interface: interface));
+              child: TokenGate(child: UserDetailsScreen(interface: interface)));
         },
       ),
       GoRoute(
         path: '/UserInformation/:route',
         pageBuilder: (context, state) {
           final route = state.pathParameters["route"]!;
-          return NoTransitionPage(child: UserInformationScreen(route: route));
+          return NoTransitionPage(
+              child: TokenGate(child: UserInformationScreen(route: route)));
         },
       ),
     ],
@@ -90,7 +94,16 @@ class _InitialScreenState extends State<InitialScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is AuthSuccess) {
+          context.read<TokenBloc>().add(TokenFetch());
+        }
+        if (state is AuthLogout) {
+          GoRouter.of(context).go('/login');
+        }
+      },
+      child: MaterialApp.router(
       title: 'Sibaha',
       debugShowCheckedModeBanner: false,
       routerConfig: _router,
@@ -126,6 +139,6 @@ class _InitialScreenState extends State<InitialScreen> {
         fontFamily: "BR Cobane",
         useMaterial3: true,
       ),
-    );
+    ));
   }
 }

@@ -5,31 +5,44 @@ import 'package:sibaha_app/presentation/blocs/academy_details_bloc/academy_detai
 import 'package:sibaha_app/presentation/blocs/token_bloc/token_bloc.dart';
 import 'package:sibaha_app/presentation/widgets/academy_details/day_schedule.dart';
 
-class AcademyDetailsWidget extends StatelessWidget {
+class AcademyDetailsWidget extends StatefulWidget {
   final int id;
 
   const AcademyDetailsWidget({super.key, required this.id});
 
   @override
-  Widget build(BuildContext context) {
-    final academyDetailsBloc = BlocProvider.of<AcademyDetailsBloc>(context);
-    final tokenBloc = BlocProvider.of<TokenBloc>(context);
+  State<AcademyDetailsWidget> createState() => _AcademyDetailsWidgetState();
+}
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SingleChildScrollView(
+class _AcademyDetailsWidgetState extends State<AcademyDetailsWidget> {
+  bool _fetchTriggered = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_fetchTriggered) {
+      final token =
+          (context.read<TokenBloc>().state as TokenRetrieved).token;
+      context
+          .read<AcademyDetailsBloc>()
+          .add(FetchAcademyDetailsEvent(token, widget.id));
+      _fetchTriggered = true;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<AcademyDetailsBloc, AcademyDetailsState>(
+      listenWhen: (_, s) => s is AcademyDetailsTokenExpired,
+      listener: (context, _) {
+        context.read<TokenBloc>().add(TokenRefresh());
+      },
+      child: SingleChildScrollView(
         child: BlocBuilder<AcademyDetailsBloc, AcademyDetailsState>(
           builder: (context, state) {
-            if (state is AcademyDetailsInitial) {
-              if (tokenBloc.state is TokenRetrieved) {
-                academyDetailsBloc.add(FetchAcademyDetailsEvent(
-                  (tokenBloc.state as TokenRetrieved).token,
-                  id,
-                ));
-              }
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (state is AcademyDetailsLoading) {
+            if (state is AcademyDetailsInitial ||
+                state is AcademyDetailsLoading ||
+                state is AcademyDetailsTokenExpired) {
               return const Center(child: CircularProgressIndicator());
             }
             if (state is AcademyDetailsFailed) {
@@ -44,19 +57,31 @@ class AcademyDetailsWidget extends StatelessWidget {
                       Container(
                         height: 250,
                         decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: NetworkImage(state.academyDetails.image),
-                            fit: BoxFit.cover,
-                          ),
+                          color: Colors.blueGrey[200],
+                          image: state.academyDetails.image != null &&
+                                  state.academyDetails.image!.isNotEmpty
+                              ? DecorationImage(
+                                  image:
+                                      NetworkImage(state.academyDetails.image!),
+                                  fit: BoxFit.cover,
+                                )
+                              : null,
                         ),
+                        child: state.academyDetails.image == null ||
+                                state.academyDetails.image!.isEmpty
+                            ? const Center(
+                                child: Icon(Icons.pool,
+                                    size: 64, color: Colors.white54),
+                              )
+                            : null,
                       ),
                       SafeArea(
                         child: Padding(
-                          padding: EdgeInsets.all(16),
+                          padding: const EdgeInsets.all(16),
                           child: GestureDetector(
                             onTap: () => context.pop(),
                             child: Container(
-                              padding: EdgeInsets.all(8),
+                              padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 shape: BoxShape.circle,
@@ -64,11 +89,11 @@ class AcademyDetailsWidget extends StatelessWidget {
                                   BoxShadow(
                                     color: Colors.black.withOpacity(0.1),
                                     blurRadius: 4,
-                                    offset: Offset(0, 2),
+                                    offset: const Offset(0, 2),
                                   ),
                                 ],
                               ),
-                              child: Icon(Icons.arrow_back,
+                              child: const Icon(Icons.arrow_back,
                                   color: Colors.black87, size: 20),
                             ),
                           ),
@@ -77,7 +102,7 @@ class AcademyDetailsWidget extends StatelessWidget {
                     ],
                   ),
                   Padding(
-                    padding: EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(20),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -90,12 +115,12 @@ class AcademyDetailsWidget extends StatelessWidget {
                                 children: [
                                   Text(
                                     state.academyDetails.name,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         fontSize: 24,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.black87),
                                   ),
-                                  SizedBox(height: 4),
+                                  const SizedBox(height: 4),
                                   Text(state.academyDetails.city,
                                       style: TextStyle(
                                           fontSize: 16,
@@ -107,10 +132,11 @@ class AcademyDetailsWidget extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            Icon(Icons.favorite, color: Colors.red, size: 28),
+                            const Icon(Icons.favorite,
+                                color: Colors.red, size: 28),
                           ],
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         SizedBox(
                           height: 50,
                           child: TextButton(
@@ -119,7 +145,7 @@ class AcademyDetailsWidget extends StatelessWidget {
                               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               backgroundColor: Colors.transparent,
                               shadowColor: Colors.transparent,
-                              shape: RoundedRectangleBorder(
+                              shape: const RoundedRectangleBorder(
                                   borderRadius: BorderRadius.zero),
                               side: BorderSide.none,
                             ),
@@ -137,13 +163,13 @@ class AcademyDetailsWidget extends StatelessWidget {
                                     );
                                   }),
                                 ),
-                                SizedBox(width: 8),
-                                Text('4.1 (42)',
+                                const SizedBox(width: 8),
+                                const Text('4.1 (42)',
                                     style: TextStyle(
                                         fontSize: 16,
                                         color: Colors.black87,
                                         fontWeight: FontWeight.w500)),
-                                Spacer(),
+                                const Spacer(),
                                 Icon(Icons.arrow_forward_ios,
                                     size: 16, color: Colors.grey[600]),
                               ],
@@ -159,57 +185,60 @@ class AcademyDetailsWidget extends StatelessWidget {
                               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               backgroundColor: Colors.transparent,
                               shadowColor: Colors.transparent,
-                              shape: RoundedRectangleBorder(
+                              shape: const RoundedRectangleBorder(
                                   borderRadius: BorderRadius.zero),
                               side: BorderSide.none,
                             ),
                             onPressed: () => context.push("/AcademyCoachs"),
                             child: Row(
                               children: [
-                                Text('Coach list (8)',
+                                const Text('Coach list (8)',
                                     style: TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.w600,
                                         color: Colors.black87)),
-                                Spacer(),
+                                const Spacer(),
                                 Icon(Icons.arrow_forward_ios,
                                     size: 16, color: Colors.grey[600]),
                               ],
                             ),
                           ),
                         ),
-                        SizedBox(height: 25),
-                        Text('Opening time',
+                        const SizedBox(height: 25),
+                        const Text('Opening time',
                             style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.black87)),
-                        SizedBox(height: 15),
+                        const SizedBox(height: 15),
                         Column(
-                          children: state.academyDetails.weekdayAvailability !=
-                                  null
-                              ? state.academyDetails.weekdayAvailability!
-                                  .map((slot) => DaySchedule(
-                                        day: slot.weekday,
-                                        time:
-                                            '${slot.startTime} - ${slot.endTime}',
-                                      ))
-                                  .toList()
-                              : [],
+                          children:
+                              state.academyDetails.weekdayAvailability != null
+                                  ? state.academyDetails.weekdayAvailability!
+                                      .map((slot) => DaySchedule(
+                                            day: slot.weekday,
+                                            time: slot.isClosed ||
+                                                    slot.startTime == null ||
+                                                    slot.endTime == null
+                                                ? 'Closed'
+                                                : '${slot.startTime} - ${slot.endTime}',
+                                          ))
+                                      .toList()
+                                  : [],
                         ),
-                        SizedBox(height: 25),
-                        Text('Specialities',
+                        const SizedBox(height: 25),
+                        const Text('Specialities',
                             style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.black87)),
-                        SizedBox(height: 15),
+                        const SizedBox(height: 15),
                         Column(
                           children: state.academyDetails.specialities
                               .map((s) => ListTile(title: Text(s)))
                               .toList(),
                         ),
-                        SizedBox(height: 40),
+                        const SizedBox(height: 40),
                         SizedBox(
                           width: double.infinity,
                           height: 50,
@@ -223,20 +252,19 @@ class AcademyDetailsWidget extends StatelessWidget {
                               ),
                               elevation: 2,
                             ),
-                            child: Text('Reserve now',
+                            child: const Text('Reserve now',
                                 style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w600)),
+                                    fontSize: 18, fontWeight: FontWeight.w600)),
                           ),
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                       ],
                     ),
                   ),
                 ],
               );
             }
-            return SizedBox();
+            return const SizedBox();
           },
         ),
       ),

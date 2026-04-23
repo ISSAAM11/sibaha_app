@@ -9,7 +9,7 @@ class Academy {
   DateTime createdAt;
   DateTime updatedAt;
   List<WeekdayAvailability>? weekdayAvailability;
-  final String image;
+  final String? image;
 
   Academy({
     required this.id,
@@ -22,7 +22,7 @@ class Academy {
     required this.createdAt,
     required this.updatedAt,
     this.weekdayAvailability,
-    required this.image,
+    this.image,
   });
 
   factory Academy.fromJson(Map<String, dynamic> json) {
@@ -30,8 +30,8 @@ class Academy {
       id: json['id'],
       name: json['name'],
       poolList: List<String>.from(json['pool_list'] ?? []),
-      city: json['city'],
-      address: json['address'],
+      city: json['city'] as String? ?? '',
+      address: json['address'] as String? ?? '',
       specialities: List<String>.from(json['specialities'] ?? []),
       description: json['description'],
       createdAt: DateTime.parse(json['created_at']),
@@ -41,7 +41,7 @@ class Academy {
               .map((i) => WeekdayAvailability.fromJson(i))
               .toList()
           : [],
-      image: json['image'],
+      image: json['image'] as String?,
     );
   }
 
@@ -63,20 +63,23 @@ class Academy {
 
 class WeekdayAvailability {
   final String weekday;
-  final String startTime;
-  final String endTime;
+  final String? startTime;
+  final String? endTime;
+  final bool isClosed;
 
   WeekdayAvailability({
     required this.weekday,
-    required this.startTime,
-    required this.endTime,
+    this.startTime,
+    this.endTime,
+    this.isClosed = false,
   });
 
   factory WeekdayAvailability.fromJson(Map<String, dynamic> json) {
     return WeekdayAvailability(
-      weekday: json['weekday'],
-      startTime: json['start_time'],
-      endTime: json['end_time'],
+      weekday: json['weekday'] as String,
+      startTime: json['start_time'] as String?,
+      endTime: json['end_time'] as String?,
+      isClosed: json['is_closed'] as bool? ?? false,
     );
   }
 
@@ -85,6 +88,7 @@ class WeekdayAvailability {
       'weekday': weekday,
       'start_time': startTime,
       'end_time': endTime,
+      'is_closed': isClosed,
     };
   }
 }

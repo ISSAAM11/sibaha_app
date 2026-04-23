@@ -5,17 +5,22 @@ import 'package:sibaha_app/data/models/academy.dart';
 
 class AcademyService {
   Future<List<Academy>> fetchAcademies(String token) async {
-    final url = Uri.parse("$httpServerPath/academy/");
+    final url = Uri.parse("$httpServerPath/api/academy/");
     try {
       final Dio dio = Dio();
+      print(token);
+
       final response = await dio.getUri(url,
           options: Options(headers: {'Authorization': 'Bearer $token'}));
       handleNoDataReceivedException(response);
+      print(response.toString());
+
       try {
         final academy = (response.data["data"] as List)
             .map((e) => Academy.fromJson(e))
             .whereType<Academy>()
             .toList();
+        print(academy.toString());
         return academy;
       } catch (parseError) {
         throw ServerException(response.statusCode,
@@ -30,7 +35,7 @@ class AcademyService {
   }
 
   Future<Academy> fetchAcademyDetails(String token, int academyId) async {
-    final url = Uri.parse("$httpServerPath/academy/$academyId");
+    final url = Uri.parse("$httpServerPath/api/academy/$academyId/");
     try {
       final Dio dio = Dio();
       final response = await dio.getUri(url,

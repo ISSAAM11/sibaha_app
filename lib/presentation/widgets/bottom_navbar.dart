@@ -10,30 +10,24 @@ class BottomNavbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokenBloc = BlocProvider.of<TokenBloc>(context);
-
-    UserType userType = UserType.user;
     return Container(
-        height: 80,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.3),
-              spreadRadius: 1,
-              blurRadius: 5,
-              offset: Offset(0, -2),
-            ),
-          ],
-        ),
-        child: BlocBuilder<TokenBloc, TokenState>(builder: (context, state) {
-          if (state is TokenInitial) {
-            tokenBloc.add(TokenFetch());
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (state is TokenRetrieved) {
-            userType = User.getUserType(state.userType);
-          }
+      height: 80,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.3),
+            spreadRadius: 1,
+            blurRadius: 5,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: BlocBuilder<TokenBloc, TokenState>(
+        builder: (context, state) {
+          final userType = state is TokenRetrieved
+              ? User.getUserType(state.userType)
+              : UserType.user;
           return userType == UserType.academyOwner
               ? Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -81,6 +75,8 @@ class BottomNavbar extends StatelessWidget {
                     ),
                   ],
                 );
-        }));
+        },
+      ),
+    );
   }
 }

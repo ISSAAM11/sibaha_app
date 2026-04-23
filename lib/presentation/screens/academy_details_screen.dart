@@ -10,7 +10,8 @@ class AcademyDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(child: AcademyDetailsWidget(id: id)),
+      backgroundColor: Colors.white,
+      body: AcademyDetailsWidget(id: id),
       bottomNavigationBar: BottomNavbar(),
     );
   }

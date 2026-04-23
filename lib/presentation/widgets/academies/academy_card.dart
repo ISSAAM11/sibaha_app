@@ -24,11 +24,19 @@ class AcademyCard extends StatelessWidget {
             children: [
               Container(
                 decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: NetworkImage(academy.image),
-                    fit: BoxFit.cover,
-                  ),
+                  color: Colors.blueGrey[200],
+                  image: academy.image != null && academy.image!.isNotEmpty
+                      ? DecorationImage(
+                          image: NetworkImage(academy.image!),
+                          fit: BoxFit.cover,
+                        )
+                      : null,
                 ),
+                child: academy.image == null || academy.image!.isEmpty
+                    ? const Center(
+                        child: Icon(Icons.pool, size: 64, color: Colors.white54),
+                      )
+                    : null,
               ),
               Container(
                 decoration: BoxDecoration(
