@@ -21,8 +21,7 @@ class _AcademyDetailsWidgetState extends State<AcademyDetailsWidget> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_fetchTriggered) {
-      final token =
-          (context.read<TokenBloc>().state as TokenRetrieved).token;
+      final token = (context.read<TokenBloc>().state as TokenRetrieved).token;
       context
           .read<AcademyDetailsBloc>()
           .add(FetchAcademyDetailsEvent(token, widget.id));
@@ -238,6 +237,92 @@ class _AcademyDetailsWidgetState extends State<AcademyDetailsWidget> {
                               .map((s) => ListTile(title: Text(s)))
                               .toList(),
                         ),
+                        const SizedBox(height: 25),
+                        const Text('Pools',
+                            style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87)),
+                        const SizedBox(height: 15),
+                        if (state.academyDetails.poolList.isEmpty)
+                          Text('Aucune piscine disponible',
+                              style: TextStyle(
+                                  fontSize: 14, color: Colors.grey[500]))
+                        else
+                          SizedBox(
+                            height: 150,
+                            child: ListView.separated(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: state.academyDetails.poolList.length,
+                              separatorBuilder: (_, __) =>
+                                  const SizedBox(width: 12),
+                              itemBuilder: (context, index) {
+                                final pool =
+                                    state.academyDetails.poolList[index];
+                                return GestureDetector(
+                                  onTap: () =>
+                                      context.push('/poolList/${pool.id}'),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Stack(
+                                      children: [
+                                        Container(
+                                          width: 200,
+                                          height: 150,
+                                          color: Colors.blueGrey[200],
+                                          child: pool.image != null &&
+                                                  pool.image!.isNotEmpty
+                                              ? Image.network(
+                                                  pool.image!,
+                                                  fit: BoxFit.cover,
+                                                  errorBuilder: (_, __, ___) =>
+                                                      const Center(
+                                                          child: Icon(
+                                                              Icons.pool,
+                                                              size: 36,
+                                                              color: Colors
+                                                                  .white54)),
+                                                )
+                                              : const Center(
+                                                  child: Icon(Icons.pool,
+                                                      size: 36,
+                                                      color: Colors.white54)),
+                                        ),
+                                        Positioned(
+                                          bottom: 0,
+                                          left: 0,
+                                          right: 0,
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8, vertical: 6),
+                                            decoration: BoxDecoration(
+                                              gradient: LinearGradient(
+                                                begin: Alignment.topCenter,
+                                                end: Alignment.bottomCenter,
+                                                colors: [
+                                                  Colors.transparent,
+                                                  Colors.black.withOpacity(0.7),
+                                                ],
+                                              ),
+                                            ),
+                                            child: Text(
+                                              pool.name,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w600),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
                         const SizedBox(height: 40),
                         SizedBox(
                           width: double.infinity,

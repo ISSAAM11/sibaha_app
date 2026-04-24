@@ -6,6 +6,9 @@ import 'package:sibaha_app/core/exceptions/app_exceptions.dart';
 import 'package:sibaha_app/core/utils/server_config.dart';
 
 class AuthService {
+  final Dio _dio;
+  AuthService(this._dio);
+
   Future<Object?> tryAutoLogin() async {
     const storage = FlutterSecureStorage();
     String? userDataString = await storage.read(key: 'userData');
@@ -46,8 +49,7 @@ class AuthService {
   Future<void> login(String email, String password) async {
     try {
       final url = Uri.parse("$httpServerPath/api/login/");
-      final Dio dio = Dio();
-      final response = await dio.postUri(
+      final response = await _dio.postUri(
         url,
         data: json.encode({"email": email, "password": password}),
         options: Options(contentType: Headers.jsonContentType),
@@ -104,8 +106,7 @@ class AuthService {
 
     try {
       final url = Uri.parse("$httpServerPath/api/token/refresh/");
-      final Dio dio = Dio();
-      final response = await dio.postUri(
+      final response = await _dio.postUri(
         url,
         data: json.encode({"refresh": storedRefreshToken}),
         options: Options(contentType: Headers.jsonContentType),
