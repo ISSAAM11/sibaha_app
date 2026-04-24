@@ -1,7 +1,9 @@
+import 'package:sibaha_app/data/models/pool_summary_dto.dart';
+
 class Academy {
   int id;
   String name;
-  List<String> poolList;
+  List<PoolSummaryDTO> poolList;
   String city;
   String address;
   List<String> specialities;
@@ -29,11 +31,13 @@ class Academy {
     return Academy(
       id: json['id'],
       name: json['name'],
-      poolList: List<String>.from(json['pool_list'] ?? []),
+      poolList: (json['pool_list'] as List? ?? [])
+          .map((e) => PoolSummaryDTO.fromJson(e as Map<String, dynamic>))
+          .toList(),
       city: json['city'] as String? ?? '',
       address: json['address'] as String? ?? '',
       specialities: List<String>.from(json['specialities'] ?? []),
-      description: json['description'],
+      description: json['description'] as String? ?? '',
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['updated_at']),
       weekdayAvailability: json['weekday_availabilities'] != null
@@ -49,7 +53,7 @@ class Academy {
     return {
       'id': id,
       'name': name,
-      'pool_list': poolList,
+      'pool_list': poolList.map((p) => {'id': p.id, 'name': p.name, 'image': p.image}).toList(),
       'city': city,
       'address': address,
       'specialities': specialities,

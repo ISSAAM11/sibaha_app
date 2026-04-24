@@ -4,11 +4,13 @@ import 'package:sibaha_app/core/utils/server_config.dart';
 import 'package:sibaha_app/data/models/user.dart';
 
 class UserService {
+  final Dio _dio;
+  UserService(this._dio);
+
   Future<User> fetchUserDetails(String token) async {
     final url = Uri.parse("$httpServerPath/api/profile/");
     try {
-      final Dio dio = Dio();
-      final response = await dio.getUri(url,
+      final response = await _dio.getUri(url,
           options: Options(headers: {'Authorization': 'Bearer $token'}));
       handleNoDataReceivedException(response);
       try {

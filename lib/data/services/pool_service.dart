@@ -1,28 +1,25 @@
 import 'package:dio/dio.dart';
 import 'package:sibaha_app/core/exceptions/app_exceptions.dart';
 import 'package:sibaha_app/core/utils/server_config.dart';
-import 'package:sibaha_app/data/models/academy.dart';
+import 'package:sibaha_app/data/models/pool.dart';
 
-class AcademyService {
+class PoolService {
   final Dio _dio;
+  PoolService(this._dio);
 
-  AcademyService(this._dio);
-
-  Future<List<Academy>> fetchAcademies(String token) async {
-    final url = Uri.parse("$httpServerPath/api/academy/");
+  Future<Pool> fetchPoolDetails(String token, int poolId) async {
+    final url = Uri.parse("$httpServerPath/api/pool/$poolId/");
     try {
       final response = await _dio.getUri(url,
           options: Options(headers: {'Authorization': 'Bearer $token'}));
       handleNoDataReceivedException(response);
 
       try {
-        return (response.data["data"] as List)
-            .map((e) => Academy.fromJson(e))
-            .whereType<Academy>()
-            .toList();
+        final pool = Pool.fromJson(response.data["data"]);
+        return pool;
       } catch (parseError) {
         throw ServerException(response.statusCode,
-            'Failed to parse Academy: ${parseError.toString()}');
+            'Failed to parse Pool: ${parseError.toString()}');
       }
     } on DioException catch (e) {
       handleDioException(e);
@@ -32,18 +29,22 @@ class AcademyService {
     }
   }
 
-  Future<Academy> fetchAcademyDetails(String token, int academyId) async {
-    final url = Uri.parse("$httpServerPath/api/academy/$academyId/");
+  Future<List<Pool>> fetchPools(String token) async {
+    final url = Uri.parse("$httpServerPath/api/pool/");
     try {
       final response = await _dio.getUri(url,
           options: Options(headers: {'Authorization': 'Bearer $token'}));
       handleNoDataReceivedException(response);
 
       try {
-        return Academy.fromJson(response.data["data"]);
+        final pools = (response.data["data"] as List)
+            .map((e) => Pool.fromJson(e))
+            .whereType<Pool>()
+            .toList();
+        return pools;
       } catch (parseError) {
         throw ServerException(response.statusCode,
-            'Failed to parse Academy: ${parseError.toString()}');
+            'Failed to parse Pool: ${parseError.toString()}');
       }
     } on DioException catch (e) {
       handleDioException(e);

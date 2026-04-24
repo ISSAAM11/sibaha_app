@@ -7,6 +7,8 @@ import 'package:sibaha_app/presentation/screens/academy_coaches_screen.dart';
 import 'package:sibaha_app/presentation/screens/academy_details_screen.dart';
 import 'package:sibaha_app/presentation/screens/academies_screen.dart';
 import 'package:sibaha_app/presentation/screens/home_screen.dart';
+import 'package:sibaha_app/presentation/screens/pool_details_screen.dart';
+import 'package:sibaha_app/presentation/screens/pools_screen.dart';
 import 'package:sibaha_app/presentation/screens/login_screen.dart';
 import 'package:sibaha_app/presentation/screens/review_screen.dart';
 import 'package:sibaha_app/presentation/screens/user/user_details_screen.dart';
@@ -61,6 +63,19 @@ class _InitialScreenState extends State<InitialScreen> {
           final id = int.parse(state.pathParameters["id"]!);
           return NoTransitionPage(
               child: TokenGate(child: AcademyDetailsScreen(id: id)));
+        },
+      ),
+      GoRoute(
+        path: '/poolList',
+        pageBuilder: (context, state) =>
+            NoTransitionPage(child: TokenGate(child: PoolsScreen())),
+      ),
+      GoRoute(
+        path: '/poolList/:id',
+        pageBuilder: (context, state) {
+          final id = int.parse(state.pathParameters["id"]!);
+          return NoTransitionPage(
+              child: TokenGate(child: PoolDetailsScreen(id: id)));
         },
       ),
       GoRoute(

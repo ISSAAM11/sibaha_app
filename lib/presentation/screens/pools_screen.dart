@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sibaha_app/presentation/widgets/academies/academies_list_widget.dart';
 import 'package:sibaha_app/presentation/widgets/bottom_navbar.dart';
+import 'package:sibaha_app/presentation/widgets/pools/pools_list_widget.dart';
 
-class AcademiesScreen extends StatelessWidget {
-  const AcademiesScreen({super.key});
+class PoolsScreen extends StatelessWidget {
+  const PoolsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +50,7 @@ class AcademiesScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: const AcademiesListWidget(),
+      body: const PoolsListWidget(),
       bottomNavigationBar: const BottomNavbar(),
     );
   }
