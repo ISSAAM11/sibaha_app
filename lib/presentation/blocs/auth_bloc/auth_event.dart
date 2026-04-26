@@ -10,6 +10,16 @@ class LoginEvent extends AuthEvent {
   LoginEvent(this.email, this.password);
 }
 
+class RegisterEvent extends AuthEvent {
+  final String username;
+  final String email;
+  final String password;
+  final String phone;
+  final String userType;
+
+  RegisterEvent(this.username, this.email, this.password, this.phone, this.userType);
+}
+
 class ResetAuthEvent extends AuthEvent {}
 
 class LogoutEvent extends AuthEvent {}

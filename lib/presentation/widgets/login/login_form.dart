@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sibaha_app/presentation/blocs/auth_bloc/auth_bloc.dart';
 
 class LoginForm extends StatelessWidget {
@@ -116,29 +117,45 @@ class LoginForm extends StatelessWidget {
                 return SizedBox(height: 16.0);
               },
             ),
-            Container(
-              height: 50,
-              margin: EdgeInsets.only(bottom: 16.0),
-              child: ElevatedButton(
-                onPressed: () {
-                  authBloc.add(LoginEvent(
-                    emailController.text,
-                    passwordController.text,
-                  ));
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50),
+            BlocBuilder<AuthBloc, AuthState>(
+              builder: (context, state) {
+                final isLoading = state is AuthLoading;
+                return Container(
+                  height: 50,
+                  margin: EdgeInsets.only(bottom: 16.0),
+                  child: ElevatedButton(
+                    onPressed: isLoading
+                        ? null
+                        : () => authBloc.add(LoginEvent(
+                              emailController.text,
+                              passwordController.text,
+                            )),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      disabledBackgroundColor: Colors.blue.shade300,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      elevation: 2,
+                    ),
+                    child: isLoading
+                        ? const SizedBox(
+                            width: 22,
+                            height: 22,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.5,
+                              color: Colors.white,
+                            ),
+                          )
+                        : const Text(
+                            'Sign In',
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w600),
+                          ),
                   ),
-                  elevation: 2,
-                ),
-                child: Text(
-                  'Sign In',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                ),
-              ),
+                );
+              },
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -148,7 +165,10 @@ class LoginForm extends StatelessWidget {
                   style: TextStyle(color: Colors.grey[600], fontSize: 14),
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    authBloc.add(ResetAuthEvent());
+                    GoRouter.of(context).go('/signup');
+                  },
                   child: Text(
                     'Sign Up',
                     style: TextStyle(

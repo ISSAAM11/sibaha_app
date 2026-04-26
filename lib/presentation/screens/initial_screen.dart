@@ -10,6 +10,7 @@ import 'package:sibaha_app/presentation/screens/home_screen.dart';
 import 'package:sibaha_app/presentation/screens/pool_details_screen.dart';
 import 'package:sibaha_app/presentation/screens/pools_screen.dart';
 import 'package:sibaha_app/presentation/screens/login_screen.dart';
+import 'package:sibaha_app/presentation/screens/signup_screen.dart';
 import 'package:sibaha_app/presentation/screens/review_screen.dart';
 import 'package:sibaha_app/presentation/screens/user/user_details_screen.dart';
 import 'package:sibaha_app/presentation/screens/user/user_information_screen.dart';
@@ -50,6 +51,10 @@ class _InitialScreenState extends State<InitialScreen> {
       GoRoute(
         path: '/login',
         pageBuilder: (context, state) => NoTransitionPage(child: LoginScreen()),
+      ),
+      GoRoute(
+        path: '/signup',
+        pageBuilder: (context, state) => NoTransitionPage(child: SignUpScreen()),
       ),
       GoRoute(
         path: '/AcademysList',

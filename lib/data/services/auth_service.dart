@@ -76,6 +76,43 @@ class AuthService {
     }
   }
 
+  Future<void> register(
+      String username, String email, String password, String phone, String userType) async {
+    try {
+      final url = Uri.parse("$httpServerPath/api/register/");
+      final response = await _dio.postUri(
+        url,
+        data: json.encode({
+          "username": username,
+          "email": email,
+          "password": password,
+          "phone": phone,
+          "user_type": userType,
+        }),
+        options: Options(contentType: Headers.jsonContentType),
+      );
+      final user = response.data["user"] as Map?;
+      if (user == null || response.data["access"] == null) {
+        throw ServerException(null, 'Invalid response from server');
+      }
+      const storage = FlutterSecureStorage();
+      final userData = json.encode({
+        'id': user['id'],
+        'username': user['username'],
+        'email': user['email'],
+        'user_type': user['user_type'],
+        'access_token': response.data["access"],
+        'refresh_token': response.data["refresh"],
+      });
+      await storage.write(key: 'userData', value: userData);
+    } on DioException catch (e) {
+      handleAuthenticationException(e);
+    } catch (e) {
+      if (e is AppException) rethrow;
+      throw ServerException(null, 'Unexpected error occurred: ${e.toString()}');
+    }
+  }
+
   Future<void> logoutUser() async {
     const storage = FlutterSecureStorage();
     await storage.delete(key: 'userData');
