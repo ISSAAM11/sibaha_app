@@ -10,6 +10,7 @@ import 'package:sibaha_app/presentation/screens/home_screen.dart';
 import 'package:sibaha_app/presentation/screens/pool_details_screen.dart';
 import 'package:sibaha_app/presentation/screens/pools_screen.dart';
 import 'package:sibaha_app/presentation/screens/login_screen.dart';
+import 'package:sibaha_app/presentation/screens/signup_screen.dart';
 import 'package:sibaha_app/presentation/screens/review_screen.dart';
 import 'package:sibaha_app/presentation/screens/user/user_details_screen.dart';
 import 'package:sibaha_app/presentation/screens/user/user_information_screen.dart';
@@ -49,8 +50,11 @@ class _InitialScreenState extends State<InitialScreen> {
       ),
       GoRoute(
         path: '/login',
-        pageBuilder: (context, state) =>
-            NoTransitionPage(child: LoginScreen()),
+        pageBuilder: (context, state) => NoTransitionPage(child: LoginScreen()),
+      ),
+      GoRoute(
+        path: '/signup',
+        pageBuilder: (context, state) => NoTransitionPage(child: SignUpScreen()),
       ),
       GoRoute(
         path: '/AcademysList',
@@ -110,50 +114,50 @@ class _InitialScreenState extends State<InitialScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
-      listener: (context, state) {
-        if (state is AuthSuccess) {
-          context.read<TokenBloc>().add(TokenFetch());
-        }
-        if (state is AuthLogout) {
-          GoRouter.of(context).go('/login');
-        }
-      },
-      child: MaterialApp.router(
-      title: 'Sibaha',
-      debugShowCheckedModeBanner: false,
-      routerConfig: _router,
-      theme: ThemeData(
-        primaryColorLight: Colors.grey.shade200,
-        textTheme: TextTheme(
-          titleLarge: TextStyle(
-            fontFamily: 'Montserrat',
-            fontSize: 16,
-            letterSpacing: 1,
-            fontWeight: FontWeight.w600,
+        listener: (context, state) {
+          if (state is AuthSuccess) {
+            context.read<TokenBloc>().add(TokenFetch());
+          }
+          if (state is AuthLogout) {
+            _router.go('/login');
+          }
+        },
+        child: MaterialApp.router(
+          title: 'Sibaha',
+          debugShowCheckedModeBanner: false,
+          routerConfig: _router,
+          theme: ThemeData(
+            primaryColorLight: Colors.grey.shade200,
+            textTheme: TextTheme(
+              titleLarge: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 16,
+                letterSpacing: 1,
+                fontWeight: FontWeight.w600,
+              ),
+              labelLarge: TextStyle(
+                fontFamily: 'Montserrat',
+                letterSpacing: 1.5,
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+              ),
+              labelMedium: TextStyle(
+                fontFamily: 'Montserrat',
+                letterSpacing: 1,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            colorScheme: const ColorScheme.light(
+              onError: Color.fromARGB(255, 0, 0, 0),
+            ),
+            hoverColor: Colors.grey[200],
+            dialogTheme: const DialogThemeData(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+            ),
+            fontFamily: "BR Cobane",
+            useMaterial3: true,
           ),
-          labelLarge: TextStyle(
-            fontFamily: 'Montserrat',
-            letterSpacing: 1.5,
-            fontSize: 15,
-            fontWeight: FontWeight.w600,
-          ),
-          labelMedium: TextStyle(
-            fontFamily: 'Montserrat',
-            letterSpacing: 1,
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        colorScheme: const ColorScheme.light(
-          onError: Color.fromARGB(255, 0, 0, 0),
-        ),
-        hoverColor: Colors.grey[200],
-        dialogTheme: const DialogThemeData(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-        ),
-        fontFamily: "BR Cobane",
-        useMaterial3: true,
-      ),
-    ));
+        ));
   }
 }

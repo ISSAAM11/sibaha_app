@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:sibaha_app/core/exceptions/app_exceptions.dart';
 import 'package:sibaha_app/data/repositories/auth_repository.dart';
 
 part 'auth_event.dart';
@@ -12,11 +13,23 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       : _authRepository = authRepository,
         super(AuthInitial()) {
     on<LoginEvent>((event, emit) async {
+      emit(AuthLoading());
       try {
         await _authRepository.login(event.email, event.password);
         emit(AuthSuccess());
       } catch (error) {
-        emit(AuthFailed(error.toString()));
+        emit(AuthFailed(error is AppException ? error.message : error.toString()));
+      }
+    });
+
+    on<RegisterEvent>((event, emit) async {
+      emit(AuthLoading());
+      try {
+        await _authRepository.register(
+            event.username, event.email, event.password, event.phone, event.userType);
+        emit(AuthSuccess());
+      } catch (error) {
+        emit(AuthFailed(error is AppException ? error.message : error.toString()));
       }
     });
 

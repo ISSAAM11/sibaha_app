@@ -84,6 +84,24 @@ Never handleDioException(DioException e) {
   }
 }
 
+String _extractDrfError(dynamic data, {String fallback = 'Bad request'}) {
+  if (data is Map) {
+    // DRF flat detail: {"detail": "..."}
+    if (data['detail'] is String) return data['detail'] as String;
+
+    // DRF field errors: {"email": ["msg"], "username": ["msg"], ...}
+    for (final value in data.values) {
+      if (value is List && value.isNotEmpty) return value.first.toString();
+      if (value is String && value.isNotEmpty) return value;
+    }
+
+    // DRF non-field errors list: {"non_field_errors": ["msg"]}
+    final nonField = data['non_field_errors'];
+    if (nonField is List && nonField.isNotEmpty) return nonField.first.toString();
+  }
+  return fallback;
+}
+
 Never handleAuthenticationException(DioException e) {
   switch (e.type) {
     case DioExceptionType.connectionTimeout:
@@ -95,15 +113,9 @@ Never handleAuthenticationException(DioException e) {
       if (e.response != null) {
         switch (e.response!.statusCode) {
           case 400:
-            final msg400 = e.response!.data["message"];
-            throw ServerException(
-                400,
-                (msg400 is List && msg400.isNotEmpty)
-                    ? msg400.first.toString()
-                    : msg400?.toString() ?? 'Bad request');
+            throw ServerException(400, _extractDrfError(e.response!.data));
           case 401:
-            final msg401 = e.response!.data["message"];
-            throw ServerException(401, msg401?.toString() ?? 'Unauthorized');
+            throw ServerException(401, _extractDrfError(e.response!.data, fallback: 'Unauthorized'));
           case 403:
             throw ServerException(403, 'Forbidden: Insufficient permissions');
           case 404:

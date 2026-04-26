@@ -13,6 +13,10 @@ class AuthRepository {
   Future<void> login(String email, String password) =>
       _service.login(email, password);
 
+  Future<void> register(
+          String username, String email, String password, String phone, String userType) =>
+      _service.register(username, email, password, phone, userType);
+
   Future<void> logout() => _service.logoutUser();
 
   Future<(String?, String?, String?)> refreshToken() =>
