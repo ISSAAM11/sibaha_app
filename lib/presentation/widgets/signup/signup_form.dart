@@ -15,10 +15,14 @@ class _SignUpFormState extends State<SignUpForm> {
   final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
   final _phoneController = TextEditingController();
 
   String _selectedRole = 'user';
   bool _obscurePassword = true;
+  bool _obscureConfirm = true;
+
+  static final _phoneRegex = RegExp(r'^[\+\d\s\-\(\)]+$');
 
   static const _emailRegex =
       r'^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$';
@@ -49,6 +53,7 @@ class _SignUpFormState extends State<SignUpForm> {
     _usernameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     _phoneController.dispose();
     super.dispose();
   }
@@ -174,12 +179,21 @@ class _SignUpFormState extends State<SignUpForm> {
                   decoration: _fieldDecoration(
                       'Phone (optional)', 'Enter your phone number',
                       Icons.phone_outlined),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) return null;
+                    final digits = value.replaceAll(RegExp(r'\D'), '');
+                    if (digits.length < 7) return 'Enter a valid phone number';
+                    if (!_phoneRegex.hasMatch(value.trim())) {
+                      return 'Phone contains invalid characters';
+                    }
+                    return null;
+                  },
                 ),
               ),
 
               // Password
               Container(
-                margin: const EdgeInsets.only(bottom: 24.0),
+                margin: const EdgeInsets.only(bottom: 16.0),
                 child: TextFormField(
                   controller: _passwordController,
                   obscureText: _obscurePassword,
@@ -204,6 +218,40 @@ class _SignUpFormState extends State<SignUpForm> {
                     }
                     if (value.length < 8) {
                       return 'Password must be at least 8 characters';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+
+              // Confirm Password
+              Container(
+                margin: const EdgeInsets.only(bottom: 24.0),
+                child: TextFormField(
+                  controller: _confirmPasswordController,
+                  obscureText: _obscureConfirm,
+                  decoration: _fieldDecoration(
+                          'Confirm Password',
+                          'Re-enter your password',
+                          Icons.lock_outlined)
+                      .copyWith(
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscureConfirm
+                            ? Icons.visibility_outlined
+                            : Icons.visibility_off_outlined,
+                        color: Colors.grey,
+                      ),
+                      onPressed: () =>
+                          setState(() => _obscureConfirm = !_obscureConfirm),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please confirm your password';
+                    }
+                    if (value != _passwordController.text) {
+                      return 'Passwords do not match';
                     }
                     return null;
                   },
