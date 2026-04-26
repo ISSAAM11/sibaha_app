@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:sibaha_app/core/exceptions/app_exceptions.dart';
 import 'package:sibaha_app/data/models/academy.dart';

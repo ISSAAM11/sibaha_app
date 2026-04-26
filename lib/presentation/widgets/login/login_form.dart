@@ -81,7 +81,7 @@ class LoginForm extends StatelessWidget {
             ),
             Container(
               alignment: Alignment.centerRight,
-              margin: EdgeInsets.only(bottom: 24.0),
+              margin: EdgeInsets.only(bottom: 8.0),
               child: TextButton(
                 onPressed: () {},
                 child: Text(
@@ -89,6 +89,32 @@ class LoginForm extends StatelessWidget {
                   style: TextStyle(color: Colors.blue, fontSize: 14),
                 ),
               ),
+            ),
+            BlocBuilder<AuthBloc, AuthState>(
+              builder: (context, state) {
+                if (state is AuthFailed) {
+                  return Container(
+                    margin: EdgeInsets.only(bottom: 16.0),
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.red.shade50,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.red.shade200),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.error_outline, color: Colors.red, size: 18),
+                        SizedBox(width: 8),
+                        Text(
+                          'Invalid email or password.',
+                          style: TextStyle(color: Colors.red, fontSize: 14),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+                return SizedBox(height: 16.0);
+              },
             ),
             Container(
               height: 50,
