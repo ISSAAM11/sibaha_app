@@ -16,3 +16,9 @@ class AuthFailed extends AuthState {
 }
 
 class AuthLogout extends AuthState {}
+
+class PasswordResetEmailSent extends AuthState {}
+
+class PasswordResetCodeVerified extends AuthState {}
+
+class PasswordResetSuccess extends AuthState {}

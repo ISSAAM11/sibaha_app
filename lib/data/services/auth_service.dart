@@ -118,6 +118,54 @@ class AuthService {
     await storage.delete(key: 'userData');
   }
 
+  Future<void> requestPasswordReset(String email) async {
+    try {
+      final url = Uri.parse("$httpServerPath/api/forgot-password/");
+      await _dio.postUri(
+        url,
+        data: json.encode({"email": email}),
+        options: Options(contentType: Headers.jsonContentType),
+      );
+    } on DioException catch (e) {
+      resetPasswordVerificationException(e);
+    } catch (e) {
+      if (e is AppException) rethrow;
+      throw ServerException(null, 'Unexpected error: ${e.toString()}');
+    }
+  }
+
+  Future<void> verifyResetCode(String email, String code) async {
+    try {
+      final url = Uri.parse("$httpServerPath/api/verify-otp/");
+      await _dio.postUri(
+        url,
+        data: json.encode({"email": email, "otp": code}),
+        options: Options(contentType: Headers.jsonContentType),
+      );
+    } on DioException catch (e) {
+      resetPasswordVerificationException(e);
+    } catch (e) {
+      if (e is AppException) rethrow;
+      throw ServerException(null, 'Unexpected error: ${e.toString()}');
+    }
+  }
+
+  Future<void> setNewPassword(String email, String code, String newPassword) async {
+    try {
+      final url = Uri.parse("$httpServerPath/api/reset-password/");
+      await _dio.postUri(
+        url,
+        data: json.encode({"email": email, "otp": code, "new_password": newPassword}),
+        options: Options(contentType: Headers.jsonContentType),
+      );
+    } on DioException catch (e) {
+      resetPasswordVerificationException(e);
+    } catch (e) {
+      if (e is AppException) rethrow;
+      throw ServerException(null, 'Unexpected error: ${e.toString()}');
+    }
+  }
+
   Future<(String?, String?, String?)> refreshToken() async {
     const storage = FlutterSecureStorage();
     String? userDataString = await storage.read(key: 'userData');

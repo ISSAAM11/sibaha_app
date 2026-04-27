@@ -25,3 +25,21 @@ class ResetAuthEvent extends AuthEvent {}
 class LogoutEvent extends AuthEvent {}
 
 class AutoAuthEvent extends AuthEvent {}
+
+class RequestPasswordResetEvent extends AuthEvent {
+  final String email;
+  RequestPasswordResetEvent(this.email);
+}
+
+class VerifyPasswordResetCodeEvent extends AuthEvent {
+  final String email;
+  final String code;
+  VerifyPasswordResetCodeEvent(this.email, this.code);
+}
+
+class SetNewPasswordEvent extends AuthEvent {
+  final String email;
+  final String code;
+  final String newPassword;
+  SetNewPasswordEvent(this.email, this.code, this.newPassword);
+}

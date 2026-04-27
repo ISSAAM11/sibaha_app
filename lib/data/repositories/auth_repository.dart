@@ -21,4 +21,13 @@ class AuthRepository {
 
   Future<(String?, String?, String?)> refreshToken() =>
       _service.refreshToken();
+
+  Future<void> requestPasswordReset(String email) =>
+      _service.requestPasswordReset(email);
+
+  Future<void> verifyResetCode(String email, String code) =>
+      _service.verifyResetCode(email, code);
+
+  Future<void> setNewPassword(String email, String code, String newPassword) =>
+      _service.setNewPassword(email, code, newPassword);
 }

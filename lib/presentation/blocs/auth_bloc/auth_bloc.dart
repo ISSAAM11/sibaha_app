@@ -50,5 +50,35 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<ResetAuthEvent>((event, emit) async {
       emit(AuthInitial());
     });
+
+    on<RequestPasswordResetEvent>((event, emit) async {
+      emit(AuthLoading());
+      try {
+        await _authRepository.requestPasswordReset(event.email);
+        emit(PasswordResetEmailSent());
+      } catch (error) {
+        emit(AuthFailed(error is AppException ? error.message : error.toString()));
+      }
+    });
+
+    on<VerifyPasswordResetCodeEvent>((event, emit) async {
+      emit(AuthLoading());
+      try {
+        await _authRepository.verifyResetCode(event.email, event.code);
+        emit(PasswordResetCodeVerified());
+      } catch (error) {
+        emit(AuthFailed(error is AppException ? error.message : error.toString()));
+      }
+    });
+
+    on<SetNewPasswordEvent>((event, emit) async {
+      emit(AuthLoading());
+      try {
+        await _authRepository.setNewPassword(event.email, event.code, event.newPassword);
+        emit(PasswordResetSuccess());
+      } catch (error) {
+        emit(AuthFailed(error is AppException ? error.message : error.toString()));
+      }
+    });
   }
 }

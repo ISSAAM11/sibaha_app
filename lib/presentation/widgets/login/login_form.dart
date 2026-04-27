@@ -84,7 +84,10 @@ class LoginForm extends StatelessWidget {
               alignment: Alignment.centerRight,
               margin: EdgeInsets.only(bottom: 8.0),
               child: TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  authBloc.add(ResetAuthEvent());
+                  GoRouter.of(context).go('/forgot-password');
+                },
                 child: Text(
                   'Forgot Password?',
                   style: TextStyle(color: Colors.blue, fontSize: 14),

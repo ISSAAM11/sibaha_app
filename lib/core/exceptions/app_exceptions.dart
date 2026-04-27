@@ -162,7 +162,8 @@ Never resetPasswordVerificationException(DioException e) {
           case 403:
             throw ServerException(403, 'Forbidden: Insufficient permissions');
           case 404:
-            throw ServerException(404, 'Requested resource not found');
+            final msg404 = e.response!.data["detail"];
+            throw ServerException(404, msg404?.toString() ?? 'No account found with this email address.');
           case 500:
             throw ServerException(500, 'Internal server error');
           default:

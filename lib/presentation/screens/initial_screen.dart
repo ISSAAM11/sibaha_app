@@ -9,6 +9,9 @@ import 'package:sibaha_app/presentation/screens/academies_screen.dart';
 import 'package:sibaha_app/presentation/screens/home_screen.dart';
 import 'package:sibaha_app/presentation/screens/pool_details_screen.dart';
 import 'package:sibaha_app/presentation/screens/pools_screen.dart';
+import 'package:sibaha_app/presentation/screens/forgot_password_email_screen.dart';
+import 'package:sibaha_app/presentation/screens/forgot_password_new_password_screen.dart';
+import 'package:sibaha_app/presentation/screens/forgot_password_otp_screen.dart';
 import 'package:sibaha_app/presentation/screens/login_screen.dart';
 import 'package:sibaha_app/presentation/screens/signup_screen.dart';
 import 'package:sibaha_app/presentation/screens/review_screen.dart';
@@ -55,6 +58,30 @@ class _InitialScreenState extends State<InitialScreen> {
       GoRoute(
         path: '/signup',
         pageBuilder: (context, state) => NoTransitionPage(child: SignUpScreen()),
+      ),
+      GoRoute(
+        path: '/forgot-password',
+        pageBuilder: (context, state) =>
+            const NoTransitionPage(child: ForgotPasswordEmailScreen()),
+      ),
+      GoRoute(
+        path: '/forgot-password/otp',
+        pageBuilder: (context, state) {
+          final email = state.extra as String? ?? '';
+          return NoTransitionPage(child: ForgotPasswordOtpScreen(email: email));
+        },
+      ),
+      GoRoute(
+        path: '/forgot-password/new-password',
+        pageBuilder: (context, state) {
+          final data = state.extra as Map<String, String>? ?? {};
+          return NoTransitionPage(
+            child: ForgotPasswordNewPasswordScreen(
+              email: data['email'] ?? '',
+              code: data['code'] ?? '',
+            ),
+          );
+        },
       ),
       GoRoute(
         path: '/AcademysList',
