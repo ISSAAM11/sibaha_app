@@ -155,24 +155,55 @@ class _InitialScreenState extends State<InitialScreen> {
           routerConfig: _router,
           theme: ThemeData(
             primaryColorLight: Colors.grey.shade200,
-            textTheme: TextTheme(
+            textTheme: const TextTheme(
+              displayLarge: TextStyle(
+                fontFamily: 'Lexend',
+                fontSize: 48,
+                fontWeight: FontWeight.w700,
+                letterSpacing: -0.02 * 48,
+              ),
+              headlineLarge: TextStyle(
+                fontFamily: 'Lexend',
+                fontSize: 32,
+                fontWeight: FontWeight.w600,
+                letterSpacing: -0.01 * 32,
+              ),
+              headlineMedium: TextStyle(
+                fontFamily: 'Lexend',
+                fontSize: 24,
+                fontWeight: FontWeight.w600,
+              ),
               titleLarge: TextStyle(
-                fontFamily: 'Montserrat',
+                fontFamily: 'Lexend',
                 fontSize: 16,
                 letterSpacing: 1,
                 fontWeight: FontWeight.w600,
               ),
+              bodyLarge: TextStyle(
+                fontFamily: 'Lexend',
+                fontSize: 18,
+                fontWeight: FontWeight.w400,
+              ),
+              bodyMedium: TextStyle(
+                fontFamily: 'Lexend',
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+              ),
               labelLarge: TextStyle(
-                fontFamily: 'Montserrat',
-                letterSpacing: 1.5,
-                fontSize: 15,
+                fontFamily: 'Lexend',
+                fontSize: 14,
+                letterSpacing: 0.05 * 14,
                 fontWeight: FontWeight.w600,
               ),
               labelMedium: TextStyle(
-                fontFamily: 'Montserrat',
-                letterSpacing: 1,
+                fontFamily: 'Lexend',
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
+              ),
+              labelSmall: TextStyle(
+                fontFamily: 'Lexend',
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
               ),
             ),
             colorScheme: const ColorScheme.light(
@@ -182,7 +213,7 @@ class _InitialScreenState extends State<InitialScreen> {
             dialogTheme: const DialogThemeData(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
             ),
-            fontFamily: "BR Cobane",
+            fontFamily: 'Lexend',
             useMaterial3: true,
           ),
         ));
