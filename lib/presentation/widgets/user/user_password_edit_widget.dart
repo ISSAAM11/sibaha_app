@@ -1,107 +1,244 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:sibaha_app/presentation/blocs/token_bloc/token_bloc.dart';
 import 'package:sibaha_app/presentation/blocs/user_details_bloc/user_details_bloc.dart';
 
-class UserPasswordEditWidget extends StatelessWidget {
+class UserPasswordEditWidget extends StatefulWidget {
   const UserPasswordEditWidget({super.key});
+
+  @override
+  State<UserPasswordEditWidget> createState() => _UserPasswordEditWidgetState();
+}
+
+class _UserPasswordEditWidgetState extends State<UserPasswordEditWidget> {
+  final _currentPasswordController = TextEditingController();
+  final _newPasswordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+
+  bool _obscureCurrent = true;
+  bool _obscureNew = true;
+  bool _obscureConfirm = true;
+
+  String? _newPasswordError;
+  String? _confirmError;
+
+  @override
+  void dispose() {
+    _currentPasswordController.dispose();
+    _newPasswordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    final newPassword = _newPasswordController.text.trim();
+    final confirmPassword = _confirmPasswordController.text.trim();
+
+    bool hasError = false;
+
+    if (newPassword.length < 8) {
+      setState(() => _newPasswordError = 'Password must be at least 8 characters.');
+      hasError = true;
+    } else {
+      setState(() => _newPasswordError = null);
+    }
+
+    if (newPassword != confirmPassword) {
+      setState(() => _confirmError = 'Passwords do not match.');
+      hasError = true;
+    } else {
+      setState(() => _confirmError = null);
+    }
+
+    if (hasError) return;
+
+    final token =
+        (context.read<TokenBloc>().state as TokenRetrieved).token;
+    context.read<UserDetailsBloc>().add(
+          ChangePasswordEvent(
+            token,
+            _currentPasswordController.text.trim(),
+            newPassword,
+          ),
+        );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Container(
-        color: Colors.grey[50],
+      child: BlocListener<UserDetailsBloc, UserDetailsState>(
+        listenWhen: (_, s) =>
+            s is ChangePasswordSuccess || s is ChangePasswordError,
+        listener: (context, state) {
+          if (state is ChangePasswordSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Password updated successfully.'),
+                backgroundColor: Color(0xFF00696F),
+              ),
+            );
+            context.go('/UserDetails/informations');
+          } else if (state is ChangePasswordError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: const Color(0xFFBA1A1A),
+              ),
+            );
+          }
+        },
         child: SingleChildScrollView(
-          child: BlocBuilder<UserDetailsBloc, UserDetailsState>(
-            builder: (context, state) {
-              if (state is UserDetailsInitial ||
-                  state is UserDetailsLoading) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (state is UserDetailsError) {
-                return Text(state.message,
-                    style: const TextStyle(color: Colors.red));
-              }
-              if (state is UserDetailsLoaded) {
-                return Column(children: [
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    color: Colors.grey[50],
-                    child: Column(children: [
-                      Container(
-                        padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.1),
-                              spreadRadius: 1,
-                              blurRadius: 4,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Edit Password',
+                style: TextStyle(
+                  fontFamily: 'Lexend',
+                  fontSize: 24,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF1C1B1B),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(color: const Color(0xFFF0EDEC)),
+                ),
+                clipBehavior: Clip.hardEdge,
+                child: Column(
+                  children: [
+                    _buildPasswordField(
+                      label: 'Current Password',
+                      controller: _currentPasswordController,
+                      obscure: _obscureCurrent,
+                      onToggle: () =>
+                          setState(() => _obscureCurrent = !_obscureCurrent),
+                    ),
+                    const Divider(height: 1, color: Color(0xFFF0EDEC)),
+                    _buildPasswordField(
+                      label: 'New Password',
+                      controller: _newPasswordController,
+                      obscure: _obscureNew,
+                      onToggle: () =>
+                          setState(() => _obscureNew = !_obscureNew),
+                      errorText: _newPasswordError,
+                    ),
+                    const Divider(height: 1, color: Color(0xFFF0EDEC)),
+                    _buildPasswordField(
+                      label: 'Confirm New Password',
+                      controller: _confirmPasswordController,
+                      obscure: _obscureConfirm,
+                      onToggle: () =>
+                          setState(() => _obscureConfirm = !_obscureConfirm),
+                      errorText: _confirmError,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+              BlocBuilder<UserDetailsBloc, UserDetailsState>(
+                buildWhen: (_, s) =>
+                    s is ChangePasswordLoading ||
+                    s is ChangePasswordSuccess ||
+                    s is ChangePasswordError ||
+                    s is UserDetailsLoaded,
+                builder: (context, state) {
+                  final isLoading = state is ChangePasswordLoading;
+                  return SizedBox(
+                    width: double.infinity,
+                    height: 52,
+                    child: ElevatedButton(
+                      onPressed: isLoading ? null : _submit,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF0058BC),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
                         ),
-                        child: Column(children: [
-                          _buildPasswordRow('New password'),
-                          _buildPasswordRow('Confirm password',
-                              isLast: true),
-                        ]),
                       ),
-                      Container(
-                        margin: const EdgeInsets.symmetric(vertical: 15),
-                        width: double.infinity,
-                        height: 40,
-                        child: ElevatedButton(
-                          onPressed: () {},
-                          child: const Text("Save",
-                              style: TextStyle(color: Colors.blue)),
-                        ),
-                      )
-                    ]),
-                  ),
-                ]);
-              }
-              return const SizedBox.shrink();
-            },
+                      child: isLoading
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : const Text(
+                              'Save Password',
+                              style: TextStyle(
+                                fontFamily: 'Lexend',
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 32),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildPasswordRow(String label, {bool isLast = false}) {
-    return Column(
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: 120,
-              child: Text(label,
-                  style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.black87,
-                      fontWeight: FontWeight.w600)),
+  Widget _buildPasswordField({
+    required String label,
+    required TextEditingController controller,
+    required bool obscure,
+    required VoidCallback onToggle,
+    String? errorText,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontFamily: 'Lexend',
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: Color(0xFF414755),
             ),
-            const SizedBox(width: 20),
-            Expanded(
-              child: TextField(
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelStyle: TextStyle(color: Colors.grey[500]),
-                  labelText: 'Write here',
-                  border: const OutlineInputBorder(),
+          ),
+          const SizedBox(height: 8),
+          TextField(
+            controller: controller,
+            obscureText: obscure,
+            style: const TextStyle(
+              fontFamily: 'Lexend',
+              fontSize: 16,
+              color: Color(0xFF1C1B1B),
+            ),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              hintText: '••••••••',
+              hintStyle: TextStyle(color: Colors.grey[400]),
+              suffixIcon: IconButton(
+                icon: Icon(
+                  obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                  color: const Color(0xFF414755),
+                  size: 20,
                 ),
+                onPressed: onToggle,
               ),
+              errorText: errorText,
+              isDense: true,
+              contentPadding: EdgeInsets.zero,
             ),
-          ],
-        ),
-        if (!isLast) ...[
-          const SizedBox(height: 16),
-          Divider(color: Colors.grey[200], height: 1),
-          const SizedBox(height: 16),
+          ),
         ],
-      ],
+      ),
     );
   }
 }
