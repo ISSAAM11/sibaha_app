@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sibaha_app/core/theme/app_theme.dart';
 import 'package:sibaha_app/presentation/blocs/auth_bloc/auth_bloc.dart';
 import 'package:sibaha_app/presentation/blocs/token_bloc/token_bloc.dart';
 import 'package:sibaha_app/presentation/screens/academy_coaches_screen.dart';
@@ -153,69 +154,7 @@ class _InitialScreenState extends State<InitialScreen> {
           title: 'Sibaha',
           debugShowCheckedModeBanner: false,
           routerConfig: _router,
-          theme: ThemeData(
-            primaryColorLight: Colors.grey.shade200,
-            textTheme: const TextTheme(
-              displayLarge: TextStyle(
-                fontFamily: 'Lexend',
-                fontSize: 48,
-                fontWeight: FontWeight.w700,
-                letterSpacing: -0.02 * 48,
-              ),
-              headlineLarge: TextStyle(
-                fontFamily: 'Lexend',
-                fontSize: 32,
-                fontWeight: FontWeight.w600,
-                letterSpacing: -0.01 * 32,
-              ),
-              headlineMedium: TextStyle(
-                fontFamily: 'Lexend',
-                fontSize: 24,
-                fontWeight: FontWeight.w600,
-              ),
-              titleLarge: TextStyle(
-                fontFamily: 'Lexend',
-                fontSize: 16,
-                letterSpacing: 1,
-                fontWeight: FontWeight.w600,
-              ),
-              bodyLarge: TextStyle(
-                fontFamily: 'Lexend',
-                fontSize: 18,
-                fontWeight: FontWeight.w400,
-              ),
-              bodyMedium: TextStyle(
-                fontFamily: 'Lexend',
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
-              ),
-              labelLarge: TextStyle(
-                fontFamily: 'Lexend',
-                fontSize: 14,
-                letterSpacing: 0.05 * 14,
-                fontWeight: FontWeight.w600,
-              ),
-              labelMedium: TextStyle(
-                fontFamily: 'Lexend',
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-              ),
-              labelSmall: TextStyle(
-                fontFamily: 'Lexend',
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            colorScheme: const ColorScheme.light(
-              onError: Color.fromARGB(255, 0, 0, 0),
-            ),
-            hoverColor: Colors.grey[200],
-            dialogTheme: const DialogThemeData(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-            ),
-            fontFamily: 'Lexend',
-            useMaterial3: true,
-          ),
+          theme: AppTheme.lightTheme,
         ));
   }
 }

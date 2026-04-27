@@ -3,17 +3,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sibaha_app/core/theme/app_colors.dart';
+import 'package:sibaha_app/core/theme/app_text_styles.dart';
 import 'package:sibaha_app/presentation/blocs/auth_bloc/auth_bloc.dart';
-
-const _primary = Color(0xFF0058BC);
-const _primaryContainer = Color(0xFF0070EB);
-const _onSurface = Color(0xFF1C1B1B);
-const _onSurfaceVariant = Color(0xFF414755);
-const _outline = Color(0xFF717786);
-const _outlineVariant = Color(0xFFC1C6D7);
-const _surfaceContainerLow = Color(0xFFF6F3F2);
-const _errorColor = Color(0xFFBA1A1A);
-const _errorContainer = Color(0xFFFFDAD6);
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -92,7 +84,7 @@ class _LoginFormState extends State<LoginForm> {
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: _primary.withOpacity(0.2),
+                color: AppColors.primary.withOpacity(0.2),
                 blurRadius: 16,
                 offset: const Offset(0, 4),
               ),
@@ -114,14 +106,14 @@ class _LoginFormState extends State<LoginForm> {
           style: TextStyle(
             fontSize: 32,
             fontWeight: FontWeight.w600,
-            color: _primary,
+            color: AppColors.primary,
             letterSpacing: -0.32,
           ),
         ),
         const SizedBox(height: 4),
         const Text(
           'Dive back into your rhythm',
-          style: TextStyle(fontSize: 16, color: _onSurfaceVariant),
+          style: TextStyle(fontSize: 16, color: AppColors.onSurfaceVariant),
         ),
       ],
     );
@@ -133,15 +125,7 @@ class _LoginFormState extends State<LoginForm> {
       children: [
         const Padding(
           padding: EdgeInsets.only(left: 4, bottom: 8),
-          child: Text(
-            'Email Address',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: _onSurfaceVariant,
-              letterSpacing: 0.7,
-            ),
-          ),
+          child: Text('Email Address', style: AppTextStyles.fieldLabel),
         ),
         _StyledTextField(
           controller: _emailController,
@@ -162,28 +146,13 @@ class _LoginFormState extends State<LoginForm> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Password',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: _onSurfaceVariant,
-                  letterSpacing: 0.7,
-                ),
-              ),
+              const Text('Password', style: AppTextStyles.fieldLabel),
               GestureDetector(
                 onTap: () {
                   authBloc.add(ResetAuthEvent());
                   GoRouter.of(context).go('/forgot-password');
                 },
-                child: const Text(
-                  'Forgot?',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: _primary,
-                  ),
-                ),
+                child: const Text('Forgot?', style: AppTextStyles.linkPrimary),
               ),
             ],
           ),
@@ -199,7 +168,7 @@ class _LoginFormState extends State<LoginForm> {
               _obscurePassword
                   ? Icons.visibility_outlined
                   : Icons.visibility_off_outlined,
-              color: _outline,
+              color: AppColors.outline,
               size: 20,
             ),
           ),
@@ -214,20 +183,21 @@ class _LoginFormState extends State<LoginForm> {
         if (state is AuthFailed) {
           return Container(
             margin: const EdgeInsets.only(bottom: 16),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             decoration: BoxDecoration(
-              color: _errorContainer,
+              color: AppColors.errorContainer,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: _errorColor.withOpacity(0.3)),
+              border: Border.all(
+                  color: AppColors.errorColor.withOpacity(0.3)),
             ),
             child: const Row(
               children: [
-                Icon(Icons.error_outline, color: _errorColor, size: 18),
+                Icon(Icons.error_outline,
+                    color: AppColors.errorColor, size: 18),
                 SizedBox(width: 8),
-                Text(
-                  'Invalid email or password.',
-                  style: TextStyle(fontSize: 14, color: _errorColor),
-                ),
+                Text('Invalid email or password.',
+                    style: AppTextStyles.errorText),
               ],
             ),
           );
@@ -251,13 +221,14 @@ class _LoginFormState extends State<LoginForm> {
                       _passwordController.text,
                     )),
             style: ElevatedButton.styleFrom(
-              backgroundColor: _primary,
+              backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,
-              disabledBackgroundColor: _primary.withOpacity(0.5),
+              disabledBackgroundColor:
+                  AppColors.primary.withOpacity(0.5),
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: const StadiumBorder(),
               elevation: 4,
-              shadowColor: _primary.withOpacity(0.3),
+              shadowColor: AppColors.primary.withOpacity(0.3),
             ),
             child: isLoading
                 ? const SizedBox(
@@ -269,14 +240,8 @@ class _LoginFormState extends State<LoginForm> {
                 : const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        'Continue Journey',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0.7,
-                        ),
-                      ),
+                      Text('Continue Journey',
+                          style: AppTextStyles.buttonLabel),
                       SizedBox(width: 8),
                       Icon(Icons.arrow_forward, size: 20),
                     ],
@@ -288,22 +253,24 @@ class _LoginFormState extends State<LoginForm> {
   }
 
   Widget _buildDivider() {
-    return const Row(
+    return Row(
       children: [
-        Expanded(child: Divider(color: _outlineVariant, thickness: 1)),
-        Padding(
+        const Expanded(
+            child: Divider(color: AppColors.outlineVariant, thickness: 1)),
+        const Padding(
           padding: EdgeInsets.symmetric(horizontal: 16),
           child: Text(
             'OR ACCESS VIA',
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w500,
-              color: _outline,
+              color: AppColors.outline,
               letterSpacing: 2,
             ),
           ),
         ),
-        Expanded(child: Divider(color: _outlineVariant, thickness: 1)),
+        const Expanded(
+            child: Divider(color: AppColors.outlineVariant, thickness: 1)),
       ],
     );
   }
@@ -323,7 +290,7 @@ class _LoginFormState extends State<LoginForm> {
                 style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: _onSurface),
+                    color: AppColors.onSurface),
               ),
             ),
           ),
@@ -332,7 +299,7 @@ class _LoginFormState extends State<LoginForm> {
         const Expanded(
           child: _SocialButton(
             label: 'Apple',
-            icon: Icon(Icons.apple, size: 20, color: _onSurface),
+            icon: Icon(Icons.apple, size: 20, color: AppColors.onSurface),
           ),
         ),
       ],
@@ -343,23 +310,15 @@ class _LoginFormState extends State<LoginForm> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text(
-          'New to the water? ',
-          style: TextStyle(fontSize: 16, color: _onSurfaceVariant),
-        ),
+        const Text('New to the water? ',
+            style: TextStyle(
+                fontSize: 16, color: AppColors.onSurfaceVariant)),
         GestureDetector(
           onTap: () {
             authBloc.add(ResetAuthEvent());
             GoRouter.of(context).go('/signup');
           },
-          child: const Text(
-            'Create Account',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: _primary,
-            ),
-          ),
+          child: const Text('Create Account', style: AppTextStyles.bodyLink),
         ),
       ],
     );
@@ -373,7 +332,7 @@ class _LoginFormState extends State<LoginForm> {
           fontFamily: 'Lexend',
           fontSize: 12,
           fontWeight: FontWeight.w500,
-          color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.6),
+          color: AppColors.onSurface.withOpacity(0.6),
         ),
         children: const [
           TextSpan(text: "By continuing, you agree to Sibaha's "),
@@ -442,15 +401,16 @@ class _StyledTextFieldState extends State<_StyledTextField> {
       focusNode: _focusNode,
       obscureText: widget.obscureText,
       keyboardType: widget.keyboardType,
-      style: const TextStyle(fontSize: 16, color: _onSurface),
+      style: AppTextStyles.fieldInput,
       decoration: InputDecoration(
         filled: true,
-        fillColor: _surfaceContainerLow,
+        fillColor: AppColors.surfaceContainerLow,
         hintText: widget.hintText,
-        hintStyle: TextStyle(fontSize: 16, color: _outline.withOpacity(0.6)),
+        hintStyle: TextStyle(
+            fontSize: 16, color: AppColors.outline.withOpacity(0.6)),
         prefixIcon: Icon(
           widget.prefixIcon,
-          color: _isFocused ? _primary : _outline,
+          color: _isFocused ? AppColors.primary : AppColors.outline,
           size: 22,
         ),
         suffixIcon: widget.suffixIcon != null
@@ -465,13 +425,15 @@ class _StyledTextFieldState extends State<_StyledTextField> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: _primary, width: 2),
+          borderSide:
+              const BorderSide(color: AppColors.primary, width: 2),
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
         ),
-        contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 4),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 16, horizontal: 4),
       ),
     );
   }
@@ -489,8 +451,9 @@ class _SocialButton extends StatelessWidget {
       onPressed: () {},
       style: OutlinedButton.styleFrom(
         backgroundColor: Colors.white,
-        side: const BorderSide(color: _outlineVariant),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        side: const BorderSide(color: AppColors.outlineVariant),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         padding: const EdgeInsets.symmetric(vertical: 14),
       ),
       child: Row(
@@ -498,14 +461,12 @@ class _SocialButton extends StatelessWidget {
         children: [
           icon,
           const SizedBox(width: 8),
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: _onSurface,
-            ),
-          ),
+          Text(label,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: AppColors.onSurface,
+              )),
         ],
       ),
     );

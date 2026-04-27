@@ -4,16 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sibaha_app/core/theme/app_colors.dart';
+import 'package:sibaha_app/core/theme/app_text_styles.dart';
 import 'package:sibaha_app/presentation/blocs/auth_bloc/auth_bloc.dart';
-
-const _primary = Color(0xFF0058BC);
-const _primaryContainer = Color(0xFF0070EB);
-const _onSurface = Color(0xFF1C1B1B);
-const _onSurfaceVariant = Color(0xFF414755);
-const _outlineVariant = Color(0xFFC1C6D7);
-const _surfaceContainerLow = Color(0xFFF6F3F2);
-const _errorColor = Color(0xFFBA1A1A);
-const _errorContainer = Color(0xFFFFDAD6);
 
 class ForgotPasswordOtpForm extends StatefulWidget {
   final String email;
@@ -92,11 +85,11 @@ class _ForgotPasswordOtpFormState extends State<ForgotPasswordOtpForm> {
           width: 80,
           height: 80,
           decoration: BoxDecoration(
-            color: _primaryContainer,
+            color: AppColors.primaryContainer,
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: _primaryContainer.withOpacity(0.2),
+                color: AppColors.primaryContainer.withOpacity(0.2),
                 blurRadius: 20,
                 offset: const Offset(0, 4),
               ),
@@ -106,26 +99,14 @@ class _ForgotPasswordOtpFormState extends State<ForgotPasswordOtpForm> {
               color: Colors.white, size: 36),
         ),
         const SizedBox(height: 16),
-        const Text(
-          'Verify Identity',
-          style: TextStyle(
-            fontSize: 32,
-            fontWeight: FontWeight.w600,
-            color: _onSurface,
-            letterSpacing: -0.32,
-          ),
-        ),
+        const Text('Verify Identity', style: AppTextStyles.screenTitle),
         const SizedBox(height: 8),
         const SizedBox(
           width: 280,
           child: Text(
             "We've sent a 6-digit verification code to your registered email address.",
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 16,
-              color: _onSurfaceVariant,
-              height: 1.5,
-            ),
+            style: AppTextStyles.subtitle,
           ),
         ),
       ],
@@ -146,7 +127,6 @@ class _ForgotPasswordOtpFormState extends State<ForgotPasswordOtpForm> {
           padding: const EdgeInsets.all(24),
           child: Column(
             children: [
-              // 6 OTP boxes
               Row(
                 children: List.generate(6, (i) {
                   return Expanded(
@@ -172,22 +152,19 @@ class _ForgotPasswordOtpFormState extends State<ForgotPasswordOtpForm> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 10),
                       decoration: BoxDecoration(
-                        color: _errorContainer,
+                        color: AppColors.errorContainer,
                         borderRadius: BorderRadius.circular(8),
-                        border:
-                            Border.all(color: _errorColor.withOpacity(0.3)),
+                        border: Border.all(
+                            color: AppColors.errorColor.withOpacity(0.3)),
                       ),
                       child: Row(
                         children: [
                           const Icon(Icons.error_outline,
-                              color: _errorColor, size: 18),
+                              color: AppColors.errorColor, size: 18),
                           const SizedBox(width: 8),
                           Expanded(
-                            child: Text(
-                              state.error,
-                              style: const TextStyle(
-                                  fontSize: 14, color: _errorColor),
-                            ),
+                            child: Text(state.error,
+                                style: AppTextStyles.errorText),
                           ),
                         ],
                       ),
@@ -205,13 +182,15 @@ class _ForgotPasswordOtpFormState extends State<ForgotPasswordOtpForm> {
                     child: ElevatedButton(
                       onPressed: isLoading ? null : () => _verify(context),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: _primary,
+                        backgroundColor: AppColors.primary,
                         foregroundColor: Colors.white,
-                        disabledBackgroundColor: _primary.withOpacity(0.5),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        disabledBackgroundColor:
+                            AppColors.primary.withOpacity(0.5),
+                        padding:
+                            const EdgeInsets.symmetric(vertical: 16),
                         shape: const StadiumBorder(),
                         elevation: 4,
-                        shadowColor: _primary.withOpacity(0.25),
+                        shadowColor: AppColors.primary.withOpacity(0.25),
                       ),
                       child: isLoading
                           ? const SizedBox(
@@ -220,29 +199,19 @@ class _ForgotPasswordOtpFormState extends State<ForgotPasswordOtpForm> {
                               child: CircularProgressIndicator(
                                   strokeWidth: 2.5, color: Colors.white),
                             )
-                          : const Text(
-                              'Verify',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: 0.7,
-                              ),
-                            ),
+                          : const Text('Verify',
+                              style: AppTextStyles.buttonLabel),
                     ),
                   );
                 },
               ),
               const SizedBox(height: 24),
-              Divider(color: _outlineVariant.withOpacity(0.3), thickness: 1),
+              Divider(
+                  color: AppColors.outlineVariant.withOpacity(0.3),
+                  thickness: 1),
               const SizedBox(height: 16),
-              const Text(
-                "Didn't receive the code?",
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: _onSurfaceVariant,
-                ),
-              ),
+              const Text("Didn't receive the code?",
+                  style: AppTextStyles.caption),
               const SizedBox(height: 8),
               TextButton(
                 onPressed: () => context
@@ -253,15 +222,13 @@ class _ForgotPasswordOtpFormState extends State<ForgotPasswordOtpForm> {
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
-                child: const Text(
-                  'Resend Code',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: _primary,
-                    letterSpacing: 0.7,
-                  ),
-                ),
+                child: const Text('Resend Code',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.primary,
+                      letterSpacing: 0.7,
+                    )),
               ),
             ],
           ),
@@ -331,7 +298,7 @@ class _OtpBoxState extends State<_OtpBox> {
           style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w600,
-            color: _onSurface,
+            color: AppColors.onSurface,
           ),
           onChanged: (value) {
             if (value.isNotEmpty) widget.onFilled();
@@ -342,19 +309,20 @@ class _OtpBoxState extends State<_OtpBox> {
             hintStyle: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w300,
-              color: _outlineVariant,
+              color: AppColors.outlineVariant,
             ),
             filled: true,
-            fillColor: _isFocused ? Colors.white : _surfaceContainerLow,
+            fillColor:
+                _isFocused ? Colors.white : AppColors.surfaceContainerLow,
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide:
-                  const BorderSide(color: _outlineVariant, width: 1.5),
+              borderSide: const BorderSide(
+                  color: AppColors.outlineVariant, width: 1.5),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide:
-                  const BorderSide(color: _primaryContainer, width: 2),
+              borderSide: const BorderSide(
+                  color: AppColors.primaryContainer, width: 2),
             ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),

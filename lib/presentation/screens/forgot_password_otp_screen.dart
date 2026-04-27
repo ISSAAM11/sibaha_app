@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sibaha_app/core/theme/app_colors.dart';
 import 'package:sibaha_app/presentation/widgets/forgot_password/forgot_password_otp_form.dart';
 
 class ForgotPasswordOtpScreen extends StatelessWidget {
@@ -29,7 +30,7 @@ class ForgotPasswordOtpScreen extends StatelessWidget {
               ),
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back,
-                    color: Color(0xFF0058BC), size: 24),
+                    color: AppColors.primary, size: 24),
                 onPressed: () => GoRouter.of(context).go('/forgot-password'),
               ),
               title: const Text(
@@ -38,7 +39,7 @@ class ForgotPasswordOtpScreen extends StatelessWidget {
                   fontFamily: 'Lexend',
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF0058BC),
+                  color: AppColors.primary,
                   letterSpacing: -0.18,
                 ),
               ),
@@ -60,7 +61,7 @@ class ForgotPasswordOtpScreen extends StatelessWidget {
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    const Color(0xFF0070EB).withOpacity(0.2),
+                    AppColors.primaryContainer.withOpacity(0.2),
                     Colors.transparent,
                   ],
                 ),
@@ -77,7 +78,7 @@ class ForgotPasswordOtpScreen extends StatelessWidget {
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    const Color(0xFF00DBE7).withOpacity(0.2),
+                    AppColors.secondaryFixedDim.withOpacity(0.2),
                     Colors.transparent,
                   ],
                 ),

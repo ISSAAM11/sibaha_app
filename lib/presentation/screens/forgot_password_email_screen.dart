@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sibaha_app/core/theme/app_colors.dart';
 import 'package:sibaha_app/presentation/widgets/forgot_password/forgot_password_email_form.dart';
 
 class ForgotPasswordEmailScreen extends StatelessWidget {
@@ -28,7 +29,7 @@ class ForgotPasswordEmailScreen extends StatelessWidget {
               ),
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back,
-                    color: Color(0xFF0058BC), size: 24),
+                    color: AppColors.primary, size: 24),
                 onPressed: () => GoRouter.of(context).go('/login'),
               ),
               title: const Text(
@@ -37,7 +38,7 @@ class ForgotPasswordEmailScreen extends StatelessWidget {
                   fontFamily: 'Lexend',
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF0058BC),
+                  color: AppColors.primary,
                   letterSpacing: -0.18,
                 ),
               ),
@@ -60,7 +61,7 @@ class ForgotPasswordEmailScreen extends StatelessWidget {
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    const Color(0xFF0070EB).withOpacity(0.2),
+                    AppColors.primaryContainer.withOpacity(0.2),
                     Colors.transparent,
                   ],
                 ),
@@ -78,7 +79,7 @@ class ForgotPasswordEmailScreen extends StatelessWidget {
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    const Color(0xFF00DBE7).withOpacity(0.2),
+                    AppColors.secondaryFixedDim.withOpacity(0.2),
                     Colors.transparent,
                   ],
                 ),
