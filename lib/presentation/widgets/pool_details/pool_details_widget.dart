@@ -20,7 +20,8 @@ class _PoolDetailsWidgetState extends State<PoolDetailsWidget> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_fetchTriggered) {
-      final token = (context.read<TokenBloc>().state as TokenRetrieved).token;
+      final tokenState = context.read<TokenBloc>().state;
+      final token = tokenState is TokenRetrieved ? tokenState.token : null;
       context
           .read<PoolDetailsBloc>()
           .add(FetchPoolDetailsEvent(token, widget.id));

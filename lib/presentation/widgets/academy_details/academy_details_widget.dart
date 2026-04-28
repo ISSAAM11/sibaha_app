@@ -21,7 +21,8 @@ class _AcademyDetailsWidgetState extends State<AcademyDetailsWidget> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_fetchTriggered) {
-      final token = (context.read<TokenBloc>().state as TokenRetrieved).token;
+      final tokenState = context.read<TokenBloc>().state;
+      final token = tokenState is TokenRetrieved ? tokenState.token : null;
       context
           .read<AcademyDetailsBloc>()
           .add(FetchAcademyDetailsEvent(token, widget.id));

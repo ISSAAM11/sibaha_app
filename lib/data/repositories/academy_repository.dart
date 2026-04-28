@@ -6,9 +6,9 @@ class AcademyRepository {
 
   AcademyRepository(this._service);
 
-  Future<List<Academy>> getAcademies(String token) =>
+  Future<List<Academy>> getAcademies(String? token) =>
       _service.fetchAcademies(token);
 
-  Future<Academy> getAcademyDetails(String token, int id) =>
+  Future<Academy> getAcademyDetails(String? token, int id) =>
       _service.fetchAcademyDetails(token, id);
 }
