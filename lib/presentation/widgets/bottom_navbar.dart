@@ -11,7 +11,7 @@ class BottomNavbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 80,
+      height: 70,
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
@@ -25,56 +25,106 @@ class BottomNavbar extends StatelessWidget {
       ),
       child: BlocBuilder<TokenBloc, TokenState>(
         builder: (context, state) {
-          final userType = state is TokenRetrieved
-              ? User.getUserType(state.userType)
-              : UserType.user;
-          return userType == UserType.academyOwner
-              ? Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    NavbarButton(
-                      icon: Icons.search,
-                      label: 'Search',
-                      isActive: true,
-                      onTap: () => context.go("/home"),
-                    ),
-                    NavbarButton(
-                      icon: Icons.maps_home_work_outlined,
-                      label: 'My Academies',
-                      isActive: false,
-                      onTap: () => context.go("/home"),
-                    ),
-                    NavbarButton(
-                      icon: Icons.person_outline,
-                      label: 'Account',
-                      isActive: false,
-                      onTap: () => context.go("/UserDetails/informations"),
-                    ),
-                  ],
-                )
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    NavbarButton(
-                      icon: Icons.search,
-                      label: 'Search',
-                      isActive: true,
-                      onTap: () => context.go("/home"),
-                    ),
-                    NavbarButton(
-                      icon: Icons.favorite_border,
-                      label: 'My List',
-                      isActive: false,
-                      onTap: () {},
-                    ),
-                    NavbarButton(
-                      icon: Icons.person_outline,
-                      label: 'Account',
-                      isActive: false,
-                      onTap: () => context.go("/UserDetails/informations"),
-                    ),
-                  ],
-                );
+          final path = GoRouterState.of(context).uri.path;
+
+          if (state is! TokenRetrieved) {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                NavbarButton(
+                  icon: Icons.home,
+                  label: 'Home',
+                  isActive: path == '/home',
+                  onTap: () => context.go('/home'),
+                ),
+                NavbarButton(
+                  icon: Icons.person,
+                  label: 'Login',
+                  isActive: path == '/login',
+                  onTap: () => context.go('/login'),
+                ),
+              ],
+            );
+          }
+
+          final userType = User.getUserType(state.userType);
+
+          if (userType == UserType.coach) {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                NavbarButton(
+                  icon: Icons.home,
+                  label: 'Home',
+                  isActive: path == '/home',
+                  onTap: () => context.go('/home'),
+                ),
+                NavbarButton(
+                  icon: Icons.calendar_today,
+                  label: 'My Schedule',
+                  isActive: path == '/my-schedule',
+                  onTap: () => context.go('/my-schedule'),
+                ),
+                NavbarButton(
+                  icon: Icons.person,
+                  label: 'Account',
+                  isActive: path.startsWith('/UserDetails'),
+                  onTap: () => context.go('/UserDetails/informations'),
+                ),
+              ],
+            );
+          }
+
+          if (userType == UserType.academyOwner) {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                NavbarButton(
+                  icon: Icons.home,
+                  label: 'Home',
+                  isActive: path == '/home',
+                  onTap: () => context.go('/home'),
+                ),
+                NavbarButton(
+                  icon: Icons.maps_home_work,
+                  label: 'My Academies',
+                  isActive: path == '/AcademysList',
+                  onTap: () => context.go('/AcademysList'),
+                ),
+                NavbarButton(
+                  icon: Icons.person,
+                  label: 'Account',
+                  isActive: path.startsWith('/UserDetails'),
+                  onTap: () => context.go('/UserDetails/informations'),
+                ),
+              ],
+            );
+          }
+
+          // UserType.user
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              NavbarButton(
+                icon: Icons.home,
+                label: 'Home',
+                isActive: path == '/home',
+                onTap: () => context.go('/home'),
+              ),
+              NavbarButton(
+                icon: Icons.school,
+                label: 'My Courses',
+                isActive: path == '/my-courses',
+                onTap: () => context.go('/my-courses'),
+              ),
+              NavbarButton(
+                icon: Icons.person,
+                label: 'Account',
+                isActive: path.startsWith('/UserDetails'),
+                onTap: () => context.go('/UserDetails/informations'),
+              ),
+            ],
+          );
         },
       ),
     );

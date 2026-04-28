@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sibaha_app/presentation/widgets/academies/academies_list_widget.dart';
-import 'package:sibaha_app/presentation/widgets/bottom_navbar.dart';
 
 class AcademiesScreen extends StatelessWidget {
   const AcademiesScreen({super.key});
@@ -51,7 +50,6 @@ class AcademiesScreen extends StatelessWidget {
         ),
       ),
       body: const AcademiesListWidget(),
-      bottomNavigationBar: const BottomNavbar(),
     );
   }
 }

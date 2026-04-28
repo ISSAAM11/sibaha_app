@@ -11,56 +11,53 @@ class UserInformationsWidget extends StatelessWidget {
     final authBloc = BlocProvider.of<AuthBloc>(context);
 
     return Expanded(
-      child: Container(
-        color: Colors.grey[50],
-        child: SingleChildScrollView(
-          child: Column(children: [
-            SizedBox(height: 15),
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Info',
-                      style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey[500],
-                          fontWeight: FontWeight.w500)),
-                  SizedBox(height: 15),
-                  _buildMenuItem(
-                    title: 'My information',
-                    onTap: () => context.push('/UserDetails/details'),
-                  ),
-                ],
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Account Settings',
+              style: TextStyle(
+                fontFamily: 'Lexend',
+                fontSize: 24,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF1C1B1B),
               ),
             ),
+            const SizedBox(height: 16),
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: const Color(0xFFF0EDEC)),
+              ),
+              clipBehavior: Clip.hardEdge,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('More',
-                      style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey[500],
-                          fontWeight: FontWeight.w500)),
-                  SizedBox(height: 15),
-                  _buildMenuItem(
-                    title: 'Edit email',
+                  _SettingItem(
+                    icon: Icons.person_outline,
+                    title: 'Personal Information',
+                    subtitle:
+                        'Update your name, bio, and public profile details',
+                    onTap: () => context.push('/UserDetails/details'),
+                  ),
+                  const _ItemDivider(),
+                  _SettingItem(
+                    icon: Icons.mail_outline,
+                    title: 'Edit Email',
+                    subtitle: 'Update your primary email address',
                     onTap: () => context.go('/UserDetails/email'),
                   ),
-                  _buildMenuItem(
-                    title: 'Edit password',
+                  const _ItemDivider(),
+                  _SettingItem(
+                    icon: Icons.lock_reset,
+                    title: 'Edit Password',
+                    subtitle: 'Change your account security credentials',
                     onTap: () => context.go('/UserDetails/password'),
                   ),
-                  Text('Logout',
-                      style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey[500],
-                          fontWeight: FontWeight.w500)),
-                  SizedBox(height: 15),
-                  _buildMenuItem(
-                    title: 'Logout',
+                  const _ItemDivider(),
+                  _SignOutItem(
                     onTap: () {
                       authBloc.add(LogoutEvent());
                       context.go('/login');
@@ -69,44 +66,128 @@ class UserInformationsWidget extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: 20),
-          ]),
+            const SizedBox(height: 32),
+          ],
         ),
       ),
     );
   }
+}
 
-  Widget _buildMenuItem({required String title, required VoidCallback onTap}) {
-    return GestureDetector(
+class _SettingItem extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  const _SettingItem({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
       onTap: onTap,
-      child: Container(
-        margin: EdgeInsets.only(bottom: 12),
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.08),
-              spreadRadius: 1,
-              blurRadius: 4,
-              offset: Offset(0, 2),
-            ),
-          ],
-        ),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
         child: Row(
           children: [
-            Expanded(
-              child: Text(title,
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.black87,
-                      fontWeight: FontWeight.w500)),
+            Container(
+              width: 40,
+              height: 40,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Color(0xFFF0EDEC),
+              ),
+              child: Icon(icon, color: const Color(0xFF414755), size: 20),
             ),
-            Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey[400]),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontFamily: 'Lexend',
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      color: Color(0xFF1C1B1B),
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: const TextStyle(
+                      fontFamily: 'Lexend',
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                      color: Color(0xFF414755),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right, color: Color(0xFF414755)),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _SignOutItem extends StatelessWidget {
+  final VoidCallback onTap;
+
+  const _SignOutItem({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: const Color(0xFFFFDAD6).withOpacity(0.4),
+              ),
+              child:
+                  const Icon(Icons.logout, color: Color(0xFFBA1A1A), size: 20),
+            ),
+            const SizedBox(width: 16),
+            const Text(
+              'Sign Out',
+              style: TextStyle(
+                fontFamily: 'Lexend',
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+                color: Color(0xFFBA1A1A),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ItemDivider extends StatelessWidget {
+  const _ItemDivider();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Divider(
+      height: 1,
+      thickness: 1,
+      color: Color(0xFFF0EDEC),
     );
   }
 }

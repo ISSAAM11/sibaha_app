@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sibaha_app/presentation/widgets/bottom_navbar.dart';
 
 class UserInformationScreen extends StatelessWidget {
   final String route;
@@ -10,7 +9,6 @@ class UserInformationScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(),
-      bottomNavigationBar: BottomNavbar(),
     );
   }
 }

@@ -18,3 +18,23 @@ class UserDetailsError extends UserDetailsState {
 }
 
 class UserDetailsTokenExpired extends UserDetailsState {}
+
+class UploadPictureLoading extends UserDetailsState {}
+
+class UpdateProfileLoading extends UserDetailsState {}
+
+class UpdateProfileSuccess extends UserDetailsState {}
+
+class UpdateProfileError extends UserDetailsState {
+  final String message;
+  UpdateProfileError(this.message);
+}
+
+class ChangePasswordLoading extends UserDetailsState {}
+
+class ChangePasswordSuccess extends UserDetailsState {}
+
+class ChangePasswordError extends UserDetailsState {
+  final String message;
+  ChangePasswordError(this.message);
+}

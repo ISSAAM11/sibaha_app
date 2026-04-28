@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sibaha_app/presentation/widgets/academy_details/coach_list.dart';
-import 'package:sibaha_app/presentation/widgets/bottom_navbar.dart';
 
 class AcademyCoachesScreen extends StatelessWidget {
   const AcademyCoachesScreen({super.key});
@@ -27,7 +26,6 @@ class AcademyCoachesScreen extends StatelessWidget {
         centerTitle: true,
       ),
       body: CoachList(),
-      bottomNavigationBar: BottomNavbar(),
     );
   }
 }
