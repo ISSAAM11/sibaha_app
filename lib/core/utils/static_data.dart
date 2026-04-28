@@ -1,3 +1,13 @@
+const List<String> uaeCities = [
+  'Abu Dhabi', 'Al Ain', 'Al Ruwais',
+  'Dubai',
+  'Sharjah', 'Khor Fakkan', 'Kalba', 'Dibba Al Hisn',
+  'Ajman',
+  'Umm Al Quwain',
+  'Ras Al Khaimah',
+  'Fujairah', 'Dibba Al Fujairah',
+];
+
 final List<Map<String, dynamic>> reviews = [
   {
     'name': 'Jasser Smih',
