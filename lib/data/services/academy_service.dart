@@ -8,11 +8,13 @@ class AcademyService {
 
   AcademyService(this._dio);
 
-  Future<List<Academy>> fetchAcademies(String token) async {
+  Future<List<Academy>> fetchAcademies(String? token) async {
     final url = Uri.parse("$httpServerPath/api/academy/");
     try {
       final response = await _dio.getUri(url,
-          options: Options(headers: {'Authorization': 'Bearer $token'}));
+          options: token != null
+              ? Options(headers: {'Authorization': 'Bearer $token'})
+              : null);
       handleNoDataReceivedException(response);
 
       try {
@@ -32,11 +34,13 @@ class AcademyService {
     }
   }
 
-  Future<Academy> fetchAcademyDetails(String token, int academyId) async {
+  Future<Academy> fetchAcademyDetails(String? token, int academyId) async {
     final url = Uri.parse("$httpServerPath/api/academy/$academyId/");
     try {
       final response = await _dio.getUri(url,
-          options: Options(headers: {'Authorization': 'Bearer $token'}));
+          options: token != null
+              ? Options(headers: {'Authorization': 'Bearer $token'})
+              : null);
       handleNoDataReceivedException(response);
 
       try {

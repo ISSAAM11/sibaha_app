@@ -7,11 +7,13 @@ class PoolService {
   final Dio _dio;
   PoolService(this._dio);
 
-  Future<Pool> fetchPoolDetails(String token, int poolId) async {
+  Future<Pool> fetchPoolDetails(String? token, int poolId) async {
     final url = Uri.parse("$httpServerPath/api/pool/$poolId/");
     try {
       final response = await _dio.getUri(url,
-          options: Options(headers: {'Authorization': 'Bearer $token'}));
+          options: token != null
+              ? Options(headers: {'Authorization': 'Bearer $token'})
+              : null);
       handleNoDataReceivedException(response);
 
       try {
@@ -29,11 +31,13 @@ class PoolService {
     }
   }
 
-  Future<List<Pool>> fetchPools(String token) async {
+  Future<List<Pool>> fetchPools(String? token) async {
     final url = Uri.parse("$httpServerPath/api/pool/");
     try {
       final response = await _dio.getUri(url,
-          options: Options(headers: {'Authorization': 'Bearer $token'}));
+          options: token != null
+              ? Options(headers: {'Authorization': 'Bearer $token'})
+              : null);
       handleNoDataReceivedException(response);
 
       try {
