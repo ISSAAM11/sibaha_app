@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sibaha_app/presentation/widgets/bottom_navbar.dart';
 import 'package:sibaha_app/presentation/widgets/pools/pools_list_widget.dart';
 
 class PoolsScreen extends StatelessWidget {
@@ -51,7 +50,6 @@ class PoolsScreen extends StatelessWidget {
         ),
       ),
       body: const PoolsListWidget(),
-      bottomNavigationBar: const BottomNavbar(),
     );
   }
 }

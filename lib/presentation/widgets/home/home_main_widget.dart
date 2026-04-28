@@ -11,8 +11,16 @@ class HomeMainWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokenState = context.read<TokenBloc>().state as TokenRetrieved;
+    return BlocBuilder<TokenBloc, TokenState>(
+      builder: (context, tokenState) {
+        final username =
+            tokenState is TokenRetrieved ? tokenState.username : null;
+        return _buildContent(context, username);
+      },
+    );
+  }
 
+  Widget _buildContent(BuildContext context, String? username) {
     return Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
       Container(
         height: 270,
@@ -41,7 +49,7 @@ class HomeMainWidget extends StatelessWidget {
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               SizedBox(height: 20),
               Text(
-                'Welcome ${tokenState.username}',
+                username != null ? 'Welcome $username' : 'Welcome',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 25,

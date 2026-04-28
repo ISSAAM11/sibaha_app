@@ -83,14 +83,14 @@ class _ForgotPasswordNewPasswordFormState
                   obscureText: true,
                   decoration: InputDecoration(
                     labelText: 'New Password',
-                    prefixIcon:
-                        const Icon(Icons.lock_outlined, color: Colors.blue),
+                    prefixIcon: const Icon(Icons.lock, color: Colors.blue),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(50),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(50),
-                      borderSide: const BorderSide(color: Colors.blue, width: 2),
+                      borderSide:
+                          const BorderSide(color: Colors.blue, width: 2),
                     ),
                   ),
                 ),
@@ -102,14 +102,14 @@ class _ForgotPasswordNewPasswordFormState
                   obscureText: true,
                   decoration: InputDecoration(
                     labelText: 'Confirm Password',
-                    prefixIcon:
-                        const Icon(Icons.lock_outlined, color: Colors.blue),
+                    prefixIcon: const Icon(Icons.lock, color: Colors.blue),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(50),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(50),
-                      borderSide: const BorderSide(color: Colors.blue, width: 2),
+                      borderSide:
+                          const BorderSide(color: Colors.blue, width: 2),
                     ),
                   ),
                 ),
@@ -159,8 +159,8 @@ class _ForgotPasswordNewPasswordFormState
                           : () {
                               if (_passwordController.text !=
                                   _confirmController.text) {
-                                setState(
-                                    () => _localError = 'Passwords do not match.');
+                                setState(() =>
+                                    _localError = 'Passwords do not match.');
                                 return;
                               }
                               setState(() => _localError = null);

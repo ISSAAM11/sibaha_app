@@ -95,8 +95,7 @@ class _ForgotPasswordOtpFormState extends State<ForgotPasswordOtpForm> {
               ),
             ],
           ),
-          child: const Icon(Icons.water_drop_outlined,
-              color: Colors.white, size: 36),
+          child: const Icon(Icons.water_drop, color: Colors.white, size: 36),
         ),
         const SizedBox(height: 16),
         const Text('Verify Identity', style: AppTextStyles.screenTitle),
@@ -186,8 +185,7 @@ class _ForgotPasswordOtpFormState extends State<ForgotPasswordOtpForm> {
                         foregroundColor: Colors.white,
                         disabledBackgroundColor:
                             AppColors.primary.withOpacity(0.5),
-                        padding:
-                            const EdgeInsets.symmetric(vertical: 16),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: const StadiumBorder(),
                         elevation: 4,
                         shadowColor: AppColors.primary.withOpacity(0.25),
@@ -316,13 +314,13 @@ class _OtpBoxState extends State<_OtpBox> {
                 _isFocused ? Colors.white : AppColors.surfaceContainerLow,
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(
-                  color: AppColors.outlineVariant, width: 1.5),
+              borderSide:
+                  const BorderSide(color: AppColors.outlineVariant, width: 1.5),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(
-                  color: AppColors.primaryContainer, width: 2),
+              borderSide:
+                  const BorderSide(color: AppColors.primaryContainer, width: 2),
             ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),

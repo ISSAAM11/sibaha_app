@@ -130,6 +130,9 @@ class _UserProfileWidgetState extends State<UserProfileWidget> {
                       ),
                     ),
                   ),
+                ] else if (state is UserDetailsLoading ||
+                    state is UserDetailsInitial) ...[
+                  const SizedBox(height: 66),
                 ] else if (state is UserDetailsError) ...[
                   Text(state.message,
                       style: const TextStyle(color: Colors.red)),
@@ -211,7 +214,9 @@ class _UserProfileWidgetState extends State<UserProfileWidget> {
     if (image == null) return;
     if (!context.mounted) return;
     final token = (context.read<TokenBloc>().state as TokenRetrieved).token;
-    context.read<UserDetailsBloc>().add(UploadProfilePictureEvent(token, image));
+    context
+        .read<UserDetailsBloc>()
+        .add(UploadProfilePictureEvent(token, image));
   }
 
   Widget _defaultAvatarContent() {

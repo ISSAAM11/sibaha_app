@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sibaha_app/presentation/widgets/bottom_navbar.dart';
 import 'package:sibaha_app/presentation/widgets/user/user_profile_widget.dart';
 
 class UserDetailsScreen extends StatelessWidget {
@@ -11,7 +10,6 @@ class UserDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: UserProfileWidget(interface),
-      bottomNavigationBar: const BottomNavbar(),
     );
   }
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sibaha_app/presentation/widgets/bottom_navbar.dart';
 import 'package:sibaha_app/presentation/widgets/pool_details/pool_details_widget.dart';
 
 class PoolDetailsScreen extends StatelessWidget {
@@ -12,7 +11,6 @@ class PoolDetailsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       body: PoolDetailsWidget(id: id),
-      bottomNavigationBar: const BottomNavbar(),
     );
   }
 }

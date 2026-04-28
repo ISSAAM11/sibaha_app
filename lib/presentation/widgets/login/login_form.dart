@@ -165,9 +165,7 @@ class _LoginFormState extends State<LoginForm> {
           suffixIcon: GestureDetector(
             onTap: () => setState(() => _obscurePassword = !_obscurePassword),
             child: Icon(
-              _obscurePassword
-                  ? Icons.visibility_outlined
-                  : Icons.visibility_off_outlined,
+              _obscurePassword ? Icons.visibility : Icons.visibility_off,
               color: AppColors.outline,
               size: 20,
             ),
@@ -183,13 +181,11 @@ class _LoginFormState extends State<LoginForm> {
         if (state is AuthFailed) {
           return Container(
             margin: const EdgeInsets.only(bottom: 16),
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             decoration: BoxDecoration(
               color: AppColors.errorContainer,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                  color: AppColors.errorColor.withOpacity(0.3)),
+              border: Border.all(color: AppColors.errorColor.withOpacity(0.3)),
             ),
             child: const Row(
               children: [
@@ -223,8 +219,7 @@ class _LoginFormState extends State<LoginForm> {
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,
-              disabledBackgroundColor:
-                  AppColors.primary.withOpacity(0.5),
+              disabledBackgroundColor: AppColors.primary.withOpacity(0.5),
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: const StadiumBorder(),
               elevation: 4,
@@ -311,8 +306,7 @@ class _LoginFormState extends State<LoginForm> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const Text('New to the water? ',
-            style: TextStyle(
-                fontSize: 16, color: AppColors.onSurfaceVariant)),
+            style: TextStyle(fontSize: 16, color: AppColors.onSurfaceVariant)),
         GestureDetector(
           onTap: () {
             authBloc.add(ResetAuthEvent());
@@ -406,8 +400,8 @@ class _StyledTextFieldState extends State<_StyledTextField> {
         filled: true,
         fillColor: AppColors.surfaceContainerLow,
         hintText: widget.hintText,
-        hintStyle: TextStyle(
-            fontSize: 16, color: AppColors.outline.withOpacity(0.6)),
+        hintStyle:
+            TextStyle(fontSize: 16, color: AppColors.outline.withOpacity(0.6)),
         prefixIcon: Icon(
           widget.prefixIcon,
           color: _isFocused ? AppColors.primary : AppColors.outline,
@@ -425,15 +419,13 @@ class _StyledTextFieldState extends State<_StyledTextField> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide:
-              const BorderSide(color: AppColors.primary, width: 2),
+          borderSide: const BorderSide(color: AppColors.primary, width: 2),
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
         ),
-        contentPadding:
-            const EdgeInsets.symmetric(vertical: 16, horizontal: 4),
+        contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 4),
       ),
     );
   }
@@ -452,8 +444,7 @@ class _SocialButton extends StatelessWidget {
       style: OutlinedButton.styleFrom(
         backgroundColor: Colors.white,
         side: const BorderSide(color: AppColors.outlineVariant),
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         padding: const EdgeInsets.symmetric(vertical: 14),
       ),
       child: Row(

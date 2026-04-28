@@ -38,7 +38,8 @@ class _UserPasswordEditWidgetState extends State<UserPasswordEditWidget> {
     bool hasError = false;
 
     if (newPassword.length < 8) {
-      setState(() => _newPasswordError = 'Password must be at least 8 characters.');
+      setState(
+          () => _newPasswordError = 'Password must be at least 8 characters.');
       hasError = true;
     } else {
       setState(() => _newPasswordError = null);
@@ -53,8 +54,7 @@ class _UserPasswordEditWidgetState extends State<UserPasswordEditWidget> {
 
     if (hasError) return;
 
-    final token =
-        (context.read<TokenBloc>().state as TokenRetrieved).token;
+    final token = (context.read<TokenBloc>().state as TokenRetrieved).token;
     context.read<UserDetailsBloc>().add(
           ChangePasswordEvent(
             token,
@@ -223,10 +223,10 @@ class _UserPasswordEditWidgetState extends State<UserPasswordEditWidget> {
             decoration: InputDecoration(
               border: InputBorder.none,
               hintText: '••••••••',
-              hintStyle: TextStyle(color: Colors.grey[400]),
+              hintStyle: TextStyle(color: Colors.grey[300]),
               suffixIcon: IconButton(
                 icon: Icon(
-                  obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                  obscure ? Icons.visibility_off : Icons.visibility,
                   color: const Color(0xFF414755),
                   size: 20,
                 ),

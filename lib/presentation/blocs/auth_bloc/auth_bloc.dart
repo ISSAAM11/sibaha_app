@@ -36,7 +36,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AutoAuthEvent>((event, emit) async {
       final user = await _authRepository.tryAutoLogin();
       if (user == null) {
-        emit(AuthLogout());
+        emit(AuthVisitor());
       } else {
         emit(AuthSuccess());
       }

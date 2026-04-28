@@ -13,6 +13,7 @@ class TokenBloc extends Bloc<TokenEvent, TokenState> {
         super(TokenInitial()) {
     on<TokenFetch>(_onFetchToken);
     on<TokenRefresh>(_onRefreshToken);
+    on<TokenDelete>((event, emit) => emit(TokenNotFound()));
   }
 
   Future<void> _onFetchToken(TokenFetch event, Emitter<TokenState> emit) async {

@@ -7,6 +7,7 @@ import 'package:sibaha_app/presentation/blocs/token_bloc/token_bloc.dart';
 import 'package:sibaha_app/presentation/screens/academy_coaches_screen.dart';
 import 'package:sibaha_app/presentation/screens/academy_details_screen.dart';
 import 'package:sibaha_app/presentation/screens/academies_screen.dart';
+import 'package:sibaha_app/presentation/screens/coach/my_schedule_screen.dart';
 import 'package:sibaha_app/presentation/screens/home_screen.dart';
 import 'package:sibaha_app/presentation/screens/pool_details_screen.dart';
 import 'package:sibaha_app/presentation/screens/pools_screen.dart';
@@ -16,8 +17,10 @@ import 'package:sibaha_app/presentation/screens/forgot_password_otp_screen.dart'
 import 'package:sibaha_app/presentation/screens/login_screen.dart';
 import 'package:sibaha_app/presentation/screens/signup_screen.dart';
 import 'package:sibaha_app/presentation/screens/review_screen.dart';
+import 'package:sibaha_app/presentation/screens/user/my_courses_screen.dart';
 import 'package:sibaha_app/presentation/screens/user/user_details_screen.dart';
 import 'package:sibaha_app/presentation/screens/user/user_information_screen.dart';
+import 'package:sibaha_app/presentation/widgets/shell_scaffold.dart';
 import 'package:sibaha_app/presentation/widgets/token_gate.dart';
 
 class InitialScreen extends StatefulWidget {
@@ -47,19 +50,7 @@ class _InitialScreenState extends State<InitialScreen> {
   final GoRouter _router = GoRouter(
     initialLocation: '/home',
     routes: <RouteBase>[
-      GoRoute(
-        path: '/home',
-        pageBuilder: (context, state) =>
-            NoTransitionPage(child: TokenGate(child: HomeScreen())),
-      ),
-      GoRoute(
-        path: '/login',
-        pageBuilder: (context, state) => NoTransitionPage(child: LoginScreen()),
-      ),
-      GoRoute(
-        path: '/signup',
-        pageBuilder: (context, state) => NoTransitionPage(child: SignUpScreen()),
-      ),
+      // Forgot-password flow — no shell/navbar (multi-step modal flow)
       GoRoute(
         path: '/forgot-password',
         pageBuilder: (context, state) =>
@@ -69,7 +60,8 @@ class _InitialScreenState extends State<InitialScreen> {
         path: '/forgot-password/otp',
         pageBuilder: (context, state) {
           final email = state.extra as String? ?? '';
-          return NoTransitionPage(child: ForgotPasswordOtpScreen(email: email));
+          return NoTransitionPage(
+              child: ForgotPasswordOtpScreen(email: email));
         },
       ),
       GoRoute(
@@ -84,57 +76,89 @@ class _InitialScreenState extends State<InitialScreen> {
           );
         },
       ),
-      GoRoute(
-        path: '/AcademysList',
-        pageBuilder: (context, state) =>
-            NoTransitionPage(child: TokenGate(child: AcademiesScreen())),
-      ),
-      GoRoute(
-        path: '/AcademyDetails/:id',
-        pageBuilder: (context, state) {
-          final id = int.parse(state.pathParameters["id"]!);
-          return NoTransitionPage(
-              child: TokenGate(child: AcademyDetailsScreen(id: id)));
-        },
-      ),
-      GoRoute(
-        path: '/poolList',
-        pageBuilder: (context, state) =>
-            NoTransitionPage(child: TokenGate(child: PoolsScreen())),
-      ),
-      GoRoute(
-        path: '/poolList/:id',
-        pageBuilder: (context, state) {
-          final id = int.parse(state.pathParameters["id"]!);
-          return NoTransitionPage(
-              child: TokenGate(child: PoolDetailsScreen(id: id)));
-        },
-      ),
-      GoRoute(
-        path: '/AcademyCoachs',
-        pageBuilder: (context, state) =>
-            NoTransitionPage(child: TokenGate(child: AcademyCoachesScreen())),
-      ),
-      GoRoute(
-        path: '/ReviewList',
-        pageBuilder: (context, state) =>
-            NoTransitionPage(child: TokenGate(child: ReviewScreen())),
-      ),
-      GoRoute(
-        path: '/UserDetails/:interface',
-        pageBuilder: (context, state) {
-          final interface = state.pathParameters["interface"]!;
-          return NoTransitionPage(
-              child: TokenGate(child: UserDetailsScreen(interface: interface)));
-        },
-      ),
-      GoRoute(
-        path: '/UserInformation/:route',
-        pageBuilder: (context, state) {
-          final route = state.pathParameters["route"]!;
-          return NoTransitionPage(
-              child: TokenGate(child: UserInformationScreen(route: route)));
-        },
+
+      // Shell routes — persistent navbar
+      ShellRoute(
+        builder: (context, state, child) => ShellScaffold(child: child),
+        routes: [
+          GoRoute(
+            path: '/home',
+            pageBuilder: (context, state) =>
+                NoTransitionPage(child: HomeScreen()),
+          ),
+          GoRoute(
+            path: '/login',
+            pageBuilder: (context, state) =>
+                NoTransitionPage(child: LoginScreen()),
+          ),
+          GoRoute(
+            path: '/signup',
+            pageBuilder: (context, state) =>
+                NoTransitionPage(child: SignUpScreen()),
+          ),
+          GoRoute(
+            path: '/my-courses',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: MyCoursesScreen()),
+          ),
+          GoRoute(
+            path: '/my-schedule',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: MyScheduleScreen()),
+          ),
+          GoRoute(
+            path: '/AcademysList',
+            pageBuilder: (context, state) =>
+                NoTransitionPage(child: AcademiesScreen()),
+          ),
+          GoRoute(
+            path: '/AcademyDetails/:id',
+            pageBuilder: (context, state) {
+              final id = int.parse(state.pathParameters['id']!);
+              return NoTransitionPage(child: AcademyDetailsScreen(id: id));
+            },
+          ),
+          GoRoute(
+            path: '/poolList',
+            pageBuilder: (context, state) =>
+                NoTransitionPage(child: PoolsScreen()),
+          ),
+          GoRoute(
+            path: '/poolList/:id',
+            pageBuilder: (context, state) {
+              final id = int.parse(state.pathParameters['id']!);
+              return NoTransitionPage(child: PoolDetailsScreen(id: id));
+            },
+          ),
+          GoRoute(
+            path: '/AcademyCoachs',
+            pageBuilder: (context, state) =>
+                NoTransitionPage(child: AcademyCoachesScreen()),
+          ),
+          GoRoute(
+            path: '/ReviewList',
+            pageBuilder: (context, state) =>
+                NoTransitionPage(child: ReviewScreen()),
+          ),
+          GoRoute(
+            path: '/UserDetails/:interface',
+            pageBuilder: (context, state) {
+              final interface = state.pathParameters['interface']!;
+              return NoTransitionPage(
+                  child: TokenGate(
+                      child: UserDetailsScreen(interface: interface)));
+            },
+          ),
+          GoRoute(
+            path: '/UserInformation/:route',
+            pageBuilder: (context, state) {
+              final route = state.pathParameters['route']!;
+              return NoTransitionPage(
+                  child:
+                      TokenGate(child: UserInformationScreen(route: route)));
+            },
+          ),
+        ],
       ),
     ],
   );
@@ -147,6 +171,7 @@ class _InitialScreenState extends State<InitialScreen> {
             context.read<TokenBloc>().add(TokenFetch());
           }
           if (state is AuthLogout) {
+            context.read<TokenBloc>().add(TokenDelete());
             _router.go('/login');
           }
         },

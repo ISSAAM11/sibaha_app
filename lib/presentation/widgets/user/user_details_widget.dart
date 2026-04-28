@@ -112,7 +112,7 @@ class _UserDetailsWidgetState extends State<UserDetailsWidget> {
                         _buildField(
                           label: 'Phone',
                           controller: _phoneController,
-                          icon: Icons.phone_outlined,
+                          icon: Icons.phone,
                           keyboardType: TextInputType.phone,
                         ),
                       ],

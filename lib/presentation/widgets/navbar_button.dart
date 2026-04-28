@@ -18,24 +18,27 @@ class NavbarButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            icon,
-            size: 24,
-            color: isActive ? Colors.blue : Colors.grey,
-          ),
-          SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
+      child: Container(
+        color: Colors.transparent, // To increase tap area
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 24,
               color: isActive ? Colors.blue : Colors.grey,
-              fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
             ),
-          ),
-        ],
+            Text(
+              label,
+              style: TextStyle(
+                height: 1.2,
+                fontSize: 12,
+                color: isActive ? Colors.blue : Colors.grey,
+                fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

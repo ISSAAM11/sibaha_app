@@ -51,8 +51,8 @@ class _ForgotPasswordEmailFormState extends State<ForgotPasswordEmailForm> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is PasswordResetEmailSent) {
-          GoRouter.of(context).go('/forgot-password/otp',
-              extra: _emailController.text.trim());
+          GoRouter.of(context)
+              .go('/forgot-password/otp', extra: _emailController.text.trim());
         }
       },
       child: SingleChildScrollView(
@@ -79,8 +79,7 @@ class _ForgotPasswordEmailFormState extends State<ForgotPasswordEmailForm> {
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.8),
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                          color: Colors.white.withOpacity(0.1)),
+                      border: Border.all(color: Colors.white.withOpacity(0.1)),
                     ),
                     padding: const EdgeInsets.all(24),
                     child: Column(
@@ -138,8 +137,7 @@ class _ForgotPasswordEmailFormState extends State<ForgotPasswordEmailForm> {
                             if (value == null || value.trim().isEmpty) {
                               return 'Email is required';
                             }
-                            if (!RegExp(_emailRegex)
-                                .hasMatch(value.trim())) {
+                            if (!RegExp(_emailRegex).hasMatch(value.trim())) {
                               return 'Enter a valid email address';
                             }
                             return null;
@@ -164,13 +162,11 @@ class _ForgotPasswordEmailFormState extends State<ForgotPasswordEmailForm> {
                                 child: Row(
                                   children: [
                                     const Icon(Icons.error_outline,
-                                        color: AppColors.errorColor,
-                                        size: 18),
+                                        color: AppColors.errorColor, size: 18),
                                     const SizedBox(width: 8),
                                     Expanded(
                                       child: Text(state.error,
-                                          style:
-                                              AppTextStyles.errorText),
+                                          style: AppTextStyles.errorText),
                                     ),
                                   ],
                                 ),
@@ -186,19 +182,17 @@ class _ForgotPasswordEmailFormState extends State<ForgotPasswordEmailForm> {
                             return SizedBox(
                               width: double.infinity,
                               child: ElevatedButton(
-                                onPressed: isLoading
-                                    ? null
-                                    : () => _submit(context),
+                                onPressed:
+                                    isLoading ? null : () => _submit(context),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppColors.primary,
                                   foregroundColor: Colors.white,
                                   disabledBackgroundColor:
                                       AppColors.primary.withOpacity(0.5),
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 16),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 16),
                                   shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.circular(12),
+                                    borderRadius: BorderRadius.circular(12),
                                   ),
                                   elevation: 4,
                                   shadowColor:
@@ -220,12 +214,10 @@ class _ForgotPasswordEmailFormState extends State<ForgotPasswordEmailForm> {
                                           Text('Send Code',
                                               style: TextStyle(
                                                 fontSize: 18,
-                                                fontWeight:
-                                                    FontWeight.w600,
+                                                fontWeight: FontWeight.w600,
                                               )),
                                           SizedBox(width: 8),
-                                          Icon(Icons.send_outlined,
-                                              size: 20),
+                                          Icon(Icons.send, size: 20),
                                         ],
                                       ),
                               ),

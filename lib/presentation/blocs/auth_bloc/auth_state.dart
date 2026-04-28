@@ -17,6 +17,8 @@ class AuthFailed extends AuthState {
 
 class AuthLogout extends AuthState {}
 
+class AuthVisitor extends AuthState {}
+
 class PasswordResetEmailSent extends AuthState {}
 
 class PasswordResetCodeVerified extends AuthState {}

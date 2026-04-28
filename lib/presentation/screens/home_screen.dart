@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sibaha_app/presentation/widgets/bottom_navbar.dart';
 import 'package:sibaha_app/presentation/widgets/home/home_main_widget.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -12,7 +11,6 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       key: _scaffoldKey,
       body: HomeMainWidget(scaffoldKey: _scaffoldKey),
-      bottomNavigationBar: const BottomNavbar(),
       drawer: Drawer(
         elevation: 0,
         width: double.infinity,

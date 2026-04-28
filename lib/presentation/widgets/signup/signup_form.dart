@@ -70,8 +70,7 @@ class _SignUpFormState extends State<SignUpForm> {
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.8),
                     borderRadius: BorderRadius.circular(16),
-                    border:
-                        Border.all(color: Colors.white.withOpacity(0.1)),
+                    border: Border.all(color: Colors.white.withOpacity(0.1)),
                   ),
                   padding: const EdgeInsets.all(24),
                   child: Column(
@@ -125,8 +124,8 @@ class _SignUpFormState extends State<SignUpForm> {
                         suffixIcon: IconButton(
                           icon: Icon(
                             _obscurePassword
-                                ? Icons.visibility_outlined
-                                : Icons.visibility_off_outlined,
+                                ? Icons.visibility
+                                : Icons.visibility_off,
                             color: AppColors.outline,
                             size: 22,
                           ),
@@ -149,15 +148,14 @@ class _SignUpFormState extends State<SignUpForm> {
                         children: [
                           _RoleChip(
                             label: 'Swimmer',
-                            icon: Icons.pool_outlined,
+                            icon: Icons.pool,
                             selected: _selectedRole == 'user',
-                            onTap: () =>
-                                setState(() => _selectedRole = 'user'),
+                            onTap: () => setState(() => _selectedRole = 'user'),
                           ),
                           const SizedBox(width: 8),
                           _RoleChip(
                             label: 'Coach',
-                            icon: Icons.sports_outlined,
+                            icon: Icons.sports,
                             selected: _selectedRole == 'coach',
                             onTap: () =>
                                 setState(() => _selectedRole = 'coach'),
@@ -165,10 +163,10 @@ class _SignUpFormState extends State<SignUpForm> {
                           const SizedBox(width: 8),
                           _RoleChip(
                             label: 'Owner',
-                            icon: Icons.business_outlined,
+                            icon: Icons.business,
                             selected: _selectedRole == 'academy_owner',
-                            onTap: () => setState(
-                                () => _selectedRole = 'academy_owner'),
+                            onTap: () =>
+                                setState(() => _selectedRole = 'academy_owner'),
                           ),
                         ],
                       ),
@@ -184,14 +182,13 @@ class _SignUpFormState extends State<SignUpForm> {
                                 color: AppColors.errorContainer,
                                 borderRadius: BorderRadius.circular(8),
                                 border: Border.all(
-                                    color: AppColors.errorColor
-                                        .withOpacity(0.3)),
+                                    color:
+                                        AppColors.errorColor.withOpacity(0.3)),
                               ),
                               child: Row(
                                 children: [
                                   const Icon(Icons.error_outline,
-                                      color: AppColors.errorColor,
-                                      size: 18),
+                                      color: AppColors.errorColor, size: 18),
                                   const SizedBox(width: 8),
                                   Expanded(
                                     child: Text(state.error,
@@ -338,8 +335,8 @@ class _StyledFieldState extends State<_StyledField> {
       validator: widget.validator,
       decoration: InputDecoration(
         hintText: widget.hint,
-        hintStyle: TextStyle(
-            fontSize: 16, color: AppColors.outline.withOpacity(0.7)),
+        hintStyle:
+            TextStyle(fontSize: 16, color: AppColors.outline.withOpacity(0.7)),
         filled: true,
         fillColor: AppColors.surfaceContainerLow,
         prefixIcon: Icon(
@@ -358,20 +355,17 @@ class _StyledFieldState extends State<_StyledField> {
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide:
-              const BorderSide(color: AppColors.errorColor, width: 1.5),
+          borderSide: const BorderSide(color: AppColors.errorColor, width: 1.5),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide:
-              const BorderSide(color: AppColors.errorColor, width: 2),
+          borderSide: const BorderSide(color: AppColors.errorColor, width: 2),
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
         ),
-        contentPadding:
-            const EdgeInsets.symmetric(vertical: 16, horizontal: 4),
+        contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 4),
       ),
     );
   }
@@ -422,9 +416,8 @@ class _RoleChip extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: selected
-                      ? AppColors.primary
-                      : AppColors.onSurfaceVariant,
+                  color:
+                      selected ? AppColors.primary : AppColors.onSurfaceVariant,
                 ),
               ),
             ],
