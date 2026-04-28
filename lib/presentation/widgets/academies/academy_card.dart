@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sibaha_app/core/theme/app_border_radius.dart';
+import 'package:sibaha_app/core/theme/app_colors.dart';
+import 'package:sibaha_app/core/theme/app_spacing.dart';
+import 'package:sibaha_app/core/theme/app_text_styles.dart';
 import 'package:sibaha_app/core/utils/static_data.dart';
 import 'package:sibaha_app/data/models/academy.dart';
 
@@ -14,95 +18,216 @@ class AcademyCard extends StatelessWidget {
     final staticAcademy = academies[index % academies.length];
 
     return GestureDetector(
-      onTap: () => context.push("/AcademyDetails/${academy.id}"),
+      onTap: () => context.push('/AcademyDetails/${academy.id}'),
       child: Container(
-        margin: EdgeInsets.only(bottom: 16),
-        height: 200,
+        margin: const EdgeInsets.only(bottom: AppSpacing.lg),
+        height: 220,
+        decoration: BoxDecoration(
+          borderRadius: AppBorderRadius.lgRadius,
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.onSurface.withOpacity(0.1),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: AppBorderRadius.lgRadius,
           child: Stack(
+            fit: StackFit.expand,
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.blueGrey[200],
-                  image: academy.image != null && academy.image!.isNotEmpty
-                      ? DecorationImage(
-                          image: NetworkImage(academy.image!),
-                          fit: BoxFit.cover,
-                        )
-                      : null,
-                ),
-                child: academy.image == null || academy.image!.isEmpty
-                    ? const Center(
-                        child: Icon(Icons.pool, size: 64, color: Colors.white54),
-                      )
-                    : null,
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withOpacity(0.7),
-                    ],
-                  ),
-                ),
-              ),
+              _buildBackground(),
+              _buildGradient(),
+              // Rating badge — top right
               Positioned(
-                top: 12,
-                right: 12,
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.7),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.star, color: Colors.yellow, size: 14),
-                      SizedBox(width: 4),
-                      Text(
-                        '${staticAcademy['rating']} (${staticAcademy['reviewCount']})',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
+                top: AppSpacing.md,
+                right: AppSpacing.md,
+                child: _RatingBadge(
+                  rating: '${staticAcademy['rating']}',
+                  reviewCount: '${staticAcademy['reviewCount']}',
                 ),
               ),
+              // Academy info — bottom overlay
               Positioned(
-                bottom: 16,
-                left: 16,
-                right: 16,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        academy.name,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    Text(
-                      academy.city,
-                      style: TextStyle(color: Colors.white70, fontSize: 14),
-                    ),
-                  ],
-                ),
+                left: AppSpacing.lg,
+                right: AppSpacing.lg,
+                bottom: AppSpacing.lg,
+                child: _InfoOverlay(academy: academy),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildBackground() {
+    if (academy.image != null && academy.image!.isNotEmpty) {
+      return Image.network(
+        academy.image!,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => _placeholder(),
+      );
+    }
+    return _placeholder();
+  }
+
+  Widget _placeholder() {
+    return Container(
+      color: AppColors.primaryContainer.withOpacity(0.15),
+      child: const Center(
+        child: Icon(Icons.pool, size: 56, color: AppColors.outlineVariant),
+      ),
+    );
+  }
+
+  Widget _buildGradient() {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Colors.transparent,
+            AppColors.onSurface.withOpacity(0.75),
+          ],
+          stops: const [0.3, 1.0],
+        ),
+      ),
+    );
+  }
+}
+
+class _RatingBadge extends StatelessWidget {
+  final String rating;
+  final String reviewCount;
+
+  const _RatingBadge({required this.rating, required this.reviewCount});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: AppSpacing.xs,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.onSurface.withOpacity(0.55),
+        borderRadius: AppBorderRadius.smRadius,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.star_rounded,
+              color: AppColors.secondaryFixedDim, size: 14),
+          const SizedBox(width: AppSpacing.xs),
+          Text(
+            '$rating ($reviewCount)',
+            style: const TextStyle(
+              fontFamily: 'Lexend',
+              color: AppColors.onPrimary,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _InfoOverlay extends StatelessWidget {
+  final Academy academy;
+
+  const _InfoOverlay({required this.academy});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Speciality chips
+        if (academy.specialities.isNotEmpty) ...[
+          Wrap(
+            spacing: AppSpacing.xs,
+            runSpacing: AppSpacing.xs,
+            children: academy.specialities
+                .take(3)
+                .map((s) => _SpecialityChip(label: s))
+                .toList(),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+        ],
+        // Name
+        Text(
+          academy.name,
+          style: const TextStyle(
+            fontFamily: 'Lexend',
+            color: AppColors.onPrimary,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        // Location + pool count
+        Row(
+          children: [
+            const Icon(Icons.location_on_outlined,
+                size: 14, color: AppColors.onPrimary),
+            const SizedBox(width: AppSpacing.xs),
+            Expanded(
+              child: Text(
+                academy.city.isNotEmpty ? academy.city : academy.address,
+                style: AppTextStyles.caption.copyWith(
+                  color: AppColors.onPrimary.withOpacity(0.85),
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            if (academy.poolList.isNotEmpty) ...[
+              const SizedBox(width: AppSpacing.sm),
+              const Icon(Icons.pool, size: 14, color: AppColors.onPrimary),
+              const SizedBox(width: AppSpacing.xs),
+              Text(
+                '${academy.poolList.length} pool${academy.poolList.length > 1 ? 's' : ''}',
+                style: AppTextStyles.caption.copyWith(
+                  color: AppColors.onPrimary.withOpacity(0.85),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _SpecialityChip extends StatelessWidget {
+  final String label;
+
+  const _SpecialityChip({required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: 2,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.onPrimary.withOpacity(0.15),
+        borderRadius: AppBorderRadius.xsRadius,
+        border:
+            Border.all(color: AppColors.onPrimary.withOpacity(0.3), width: 0.5),
+      ),
+      child: Text(
+        label,
+        style: AppTextStyles.caption.copyWith(color: AppColors.onPrimary),
       ),
     );
   }
