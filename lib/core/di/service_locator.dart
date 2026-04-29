@@ -2,10 +2,12 @@ import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sibaha_app/data/repositories/academy_repository.dart';
 import 'package:sibaha_app/data/repositories/auth_repository.dart';
+import 'package:sibaha_app/data/repositories/coach_repository.dart';
 import 'package:sibaha_app/data/repositories/pool_repository.dart';
 import 'package:sibaha_app/data/repositories/user_repository.dart';
 import 'package:sibaha_app/data/services/academy_service.dart';
 import 'package:sibaha_app/data/services/auth_service.dart';
+import 'package:sibaha_app/data/services/coach_service.dart';
 import 'package:sibaha_app/data/services/pool_service.dart';
 import 'package:sibaha_app/data/services/user_service.dart';
 
@@ -18,9 +20,11 @@ void setupLocator() {
   getIt.registerLazySingleton<AcademyService>(() => AcademyService(getIt<Dio>()));
   getIt.registerLazySingleton<PoolService>(() => PoolService(getIt<Dio>()));
   getIt.registerLazySingleton<UserService>(() => UserService(getIt<Dio>()));
+  getIt.registerLazySingleton<CoachService>(() => CoachService(getIt<Dio>()));
 
   getIt.registerLazySingleton<AuthRepository>(() => AuthRepository(getIt<AuthService>()));
   getIt.registerLazySingleton<AcademyRepository>(() => AcademyRepository(getIt<AcademyService>()));
   getIt.registerLazySingleton<PoolRepository>(() => PoolRepository(getIt<PoolService>()));
   getIt.registerLazySingleton<UserRepository>(() => UserRepository(getIt<UserService>()));
+  getIt.registerLazySingleton<CoachRepository>(() => CoachRepository(getIt<CoachService>()));
 }

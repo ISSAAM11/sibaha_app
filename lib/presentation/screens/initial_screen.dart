@@ -5,6 +5,9 @@ import 'package:sibaha_app/core/theme/app_theme.dart';
 import 'package:sibaha_app/presentation/blocs/auth_bloc/auth_bloc.dart';
 import 'package:sibaha_app/presentation/blocs/token_bloc/token_bloc.dart';
 import 'package:sibaha_app/presentation/screens/academy_coaches_screen.dart';
+import 'package:sibaha_app/data/models/coach_summary.dart';
+import 'package:sibaha_app/presentation/screens/coach_details_screen.dart';
+import 'package:sibaha_app/presentation/screens/coaches_screen.dart';
 import 'package:sibaha_app/presentation/screens/academy_details_screen.dart';
 import 'package:sibaha_app/presentation/screens/academies_screen.dart';
 import 'package:sibaha_app/presentation/screens/coach/my_schedule_screen.dart';
@@ -134,6 +137,19 @@ class _InitialScreenState extends State<InitialScreen> {
             path: '/AcademyCoachs',
             pageBuilder: (context, state) =>
                 NoTransitionPage(child: AcademyCoachesScreen()),
+          ),
+          GoRoute(
+            path: '/coachList',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: CoachesScreen()),
+          ),
+          GoRoute(
+            path: '/coachList/:id',
+            pageBuilder: (context, state) {
+              final coach = state.extra as CoachSummary;
+              return NoTransitionPage(
+                  child: CoachDetailsScreen(coach: coach));
+            },
           ),
           GoRoute(
             path: '/ReviewList',
