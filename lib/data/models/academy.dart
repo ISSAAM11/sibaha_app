@@ -12,6 +12,8 @@ class Academy {
   DateTime updatedAt;
   List<WeekdayAvailability>? weekdayAvailability;
   final String? image;
+  final double? latitude;
+  final double? longitude;
 
   Academy({
     required this.id,
@@ -25,6 +27,8 @@ class Academy {
     required this.updatedAt,
     this.weekdayAvailability,
     this.image,
+    this.latitude,
+    this.longitude,
   });
 
   factory Academy.fromJson(Map<String, dynamic> json) {
@@ -46,6 +50,12 @@ class Academy {
               .toList()
           : [],
       image: json['image'] as String?,
+      latitude: json['latitude'] != null
+          ? double.tryParse(json['latitude'].toString())
+          : null,
+      longitude: json['longitude'] != null
+          ? double.tryParse(json['longitude'].toString())
+          : null,
     );
   }
 
@@ -61,6 +71,8 @@ class Academy {
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
       'image': image,
+      'latitude': latitude,
+      'longitude': longitude,
     };
   }
 }
