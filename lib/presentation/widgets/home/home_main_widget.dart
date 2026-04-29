@@ -116,7 +116,7 @@ class _Hero extends StatelessWidget {
                     child: SearchButton(
                       icon: Icons.person,
                       label: 'Coach',
-                      onTap: () => context.go('/CoachesList'),
+                      onTap: () => context.go('/coachList'),
                     ),
                   ),
                 ],
