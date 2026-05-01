@@ -9,6 +9,7 @@ import 'package:sibaha_app/data/repositories/user_repository.dart';
 import 'package:sibaha_app/presentation/blocs/academy_bloc/academy_bloc.dart';
 import 'package:sibaha_app/presentation/blocs/academy_details_bloc/academy_details_bloc.dart';
 import 'package:sibaha_app/presentation/blocs/auth_bloc/auth_bloc.dart';
+import 'package:sibaha_app/presentation/blocs/my_academy_bloc/my_academy_bloc.dart';
 import 'package:sibaha_app/presentation/blocs/coach_bloc/coach_bloc.dart';
 import 'package:sibaha_app/presentation/blocs/pool_bloc/pool_bloc.dart';
 import 'package:sibaha_app/presentation/blocs/pool_details_bloc/pool_details_bloc.dart';
@@ -45,6 +46,11 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (_) => AcademyDetailsBloc(
+            academyRepository: getIt<AcademyRepository>(),
+          ),
+        ),
+        BlocProvider(
+          create: (_) => MyAcademyBloc(
             academyRepository: getIt<AcademyRepository>(),
           ),
         ),

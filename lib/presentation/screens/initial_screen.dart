@@ -10,6 +10,8 @@ import 'package:sibaha_app/presentation/screens/coach_details_screen.dart';
 import 'package:sibaha_app/presentation/screens/coaches_screen.dart';
 import 'package:sibaha_app/presentation/screens/academy_details_screen.dart';
 import 'package:sibaha_app/presentation/screens/academies_screen.dart';
+import 'package:sibaha_app/presentation/screens/create_academy_screen.dart';
+import 'package:sibaha_app/presentation/screens/my_academies_screen.dart';
 import 'package:sibaha_app/presentation/screens/coach/my_schedule_screen.dart';
 import 'package:sibaha_app/presentation/screens/home_screen.dart';
 import 'package:sibaha_app/presentation/screens/pool_details_screen.dart';
@@ -113,6 +115,16 @@ class _InitialScreenState extends State<InitialScreen> {
             path: '/AcademysList',
             pageBuilder: (context, state) =>
                 NoTransitionPage(child: AcademiesScreen()),
+          ),
+          GoRoute(
+            path: '/MyAcademies',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: MyAcademiesScreen()),
+          ),
+          GoRoute(
+            path: '/MyAcademies/create',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: CreateAcademyScreen()),
           ),
           GoRoute(
             path: '/AcademyDetails/:id',
