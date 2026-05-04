@@ -88,8 +88,8 @@ class BottomNavbar extends StatelessWidget {
                 NavbarButton(
                   icon: Icons.maps_home_work,
                   label: 'My Academies',
-                  isActive: path == '/AcademysList',
-                  onTap: () => context.go('/AcademysList'),
+                  isActive: path.startsWith('/MyAcademies'),
+                  onTap: () => context.go('/MyAcademies'),
                 ),
                 NavbarButton(
                   icon: Icons.person,

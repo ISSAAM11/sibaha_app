@@ -6,8 +6,8 @@ class PoolRepository {
 
   PoolRepository(this._service);
 
-  Future<List<Pool>> getPools(String token) => _service.fetchPools(token);
+  Future<List<Pool>> getPools(String? token) => _service.fetchPools(token);
 
-  Future<Pool> getPoolDetails(String token, int id) =>
+  Future<Pool> getPoolDetails(String? token, int id) =>
       _service.fetchPoolDetails(token, id);
 }

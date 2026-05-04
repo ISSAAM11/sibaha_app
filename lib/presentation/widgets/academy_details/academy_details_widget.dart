@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sibaha_app/presentation/blocs/academy_details_bloc/academy_details_bloc.dart';
 import 'package:sibaha_app/presentation/blocs/token_bloc/token_bloc.dart';
+import 'package:sibaha_app/presentation/widgets/academy_details/academy_map_section.dart';
 import 'package:sibaha_app/presentation/widgets/academy_details/day_schedule.dart';
 
 class AcademyDetailsWidget extends StatefulWidget {
@@ -21,7 +22,8 @@ class _AcademyDetailsWidgetState extends State<AcademyDetailsWidget> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_fetchTriggered) {
-      final token = (context.read<TokenBloc>().state as TokenRetrieved).token;
+      final tokenState = context.read<TokenBloc>().state;
+      final token = tokenState is TokenRetrieved ? tokenState.token : null;
       context
           .read<AcademyDetailsBloc>()
           .add(FetchAcademyDetailsEvent(token, widget.id));
@@ -238,6 +240,15 @@ class _AcademyDetailsWidgetState extends State<AcademyDetailsWidget> {
                               .toList(),
                         ),
                         const SizedBox(height: 25),
+                        if (state.academyDetails.latitude != null &&
+                            state.academyDetails.longitude != null) ...[
+                          AcademyMapSection(
+                            latitude: state.academyDetails.latitude!,
+                            longitude: state.academyDetails.longitude!,
+                            academyName: state.academyDetails.name,
+                          ),
+                          const SizedBox(height: 25),
+                        ],
                         const Text('Pools',
                             style: TextStyle(
                                 fontSize: 18,

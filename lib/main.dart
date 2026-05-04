@@ -3,11 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sibaha_app/core/di/service_locator.dart';
 import 'package:sibaha_app/data/repositories/academy_repository.dart';
 import 'package:sibaha_app/data/repositories/auth_repository.dart';
+import 'package:sibaha_app/data/repositories/coach_repository.dart';
 import 'package:sibaha_app/data/repositories/pool_repository.dart';
 import 'package:sibaha_app/data/repositories/user_repository.dart';
 import 'package:sibaha_app/presentation/blocs/academy_bloc/academy_bloc.dart';
 import 'package:sibaha_app/presentation/blocs/academy_details_bloc/academy_details_bloc.dart';
 import 'package:sibaha_app/presentation/blocs/auth_bloc/auth_bloc.dart';
+import 'package:sibaha_app/presentation/blocs/my_academy_bloc/my_academy_bloc.dart';
+import 'package:sibaha_app/presentation/blocs/coach_bloc/coach_bloc.dart';
 import 'package:sibaha_app/presentation/blocs/pool_bloc/pool_bloc.dart';
 import 'package:sibaha_app/presentation/blocs/pool_details_bloc/pool_details_bloc.dart';
 import 'package:sibaha_app/presentation/blocs/token_bloc/token_bloc.dart';
@@ -47,6 +50,11 @@ class MyApp extends StatelessWidget {
           ),
         ),
         BlocProvider(
+          create: (_) => MyAcademyBloc(
+            academyRepository: getIt<AcademyRepository>(),
+          ),
+        ),
+        BlocProvider(
           create: (_) => PoolBloc(
             poolRepository: getIt<PoolRepository>(),
           ),
@@ -59,6 +67,11 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (_) => UserDetailsBloc(
             userRepository: getIt<UserRepository>(),
+          ),
+        ),
+        BlocProvider(
+          create: (_) => CoachBloc(
+            coachRepository: getIt<CoachRepository>(),
           ),
         ),
       ],
