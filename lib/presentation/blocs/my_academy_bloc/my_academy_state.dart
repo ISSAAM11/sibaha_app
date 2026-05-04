@@ -50,3 +50,22 @@ class AcademyCreateFailed extends MyAcademyState {
   @override
   List<Object?> get props => [message];
 }
+
+class AcademyUpdating extends MyAcademyState {
+  @override
+  List<Object?> get props => [];
+}
+
+class AcademyUpdated extends MyAcademyState {
+  final Academy academy;
+  AcademyUpdated(this.academy);
+  @override
+  List<Object?> get props => [academy];
+}
+
+class AcademyUpdateFailed extends MyAcademyState {
+  final String message;
+  AcademyUpdateFailed(this.message);
+  @override
+  List<Object?> get props => [message];
+}

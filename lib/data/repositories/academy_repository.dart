@@ -40,4 +40,31 @@ class AcademyRepository {
         latitude: latitude,
         longitude: longitude,
       );
+
+  Future<Academy> updateAcademy({
+    required String token,
+    required int academyId,
+    required String name,
+    required String city,
+    required String address,
+    required String description,
+    required List<String> specialities,
+    Uint8List? pictureBytes,
+    String? pictureFilename,
+    double? latitude,
+    double? longitude,
+  }) =>
+      _service.updateAcademy(
+        token: token,
+        academyId: academyId,
+        name: name,
+        city: city,
+        address: address,
+        description: description,
+        specialities: specialities,
+        pictureBytes: pictureBytes,
+        pictureFilename: pictureFilename,
+        latitude: latitude,
+        longitude: longitude,
+      );
 }

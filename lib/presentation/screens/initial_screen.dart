@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sibaha_app/core/theme/app_theme.dart';
+import 'package:sibaha_app/data/models/academy.dart';
 import 'package:sibaha_app/presentation/blocs/auth_bloc/auth_bloc.dart';
 import 'package:sibaha_app/presentation/blocs/token_bloc/token_bloc.dart';
 import 'package:sibaha_app/presentation/screens/academy_coaches_screen.dart';
@@ -125,6 +126,15 @@ class _InitialScreenState extends State<InitialScreen> {
             path: '/MyAcademies/create',
             pageBuilder: (context, state) =>
                 const NoTransitionPage(child: CreateAcademyScreen()),
+          ),
+          GoRoute(
+            path: '/MyAcademies/edit/:id',
+            pageBuilder: (context, state) {
+              final academy = state.extra as Academy?;
+              return NoTransitionPage(
+                child: CreateAcademyScreen(academy: academy),
+              );
+            },
           ),
           GoRoute(
             path: '/AcademyDetails/:id',

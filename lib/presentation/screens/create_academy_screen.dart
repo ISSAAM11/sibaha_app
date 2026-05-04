@@ -7,6 +7,7 @@ import 'package:sibaha_app/core/theme/app_border_radius.dart';
 import 'package:sibaha_app/core/theme/app_colors.dart';
 import 'package:sibaha_app/core/theme/app_spacing.dart';
 import 'package:sibaha_app/core/theme/app_text_styles.dart';
+import 'package:sibaha_app/data/models/academy.dart';
 import 'package:sibaha_app/presentation/blocs/my_academy_bloc/my_academy_bloc.dart';
 import 'package:sibaha_app/presentation/blocs/token_bloc/token_bloc.dart';
 
@@ -21,7 +22,9 @@ const _kSpecialities = [
 ];
 
 class CreateAcademyScreen extends StatefulWidget {
-  const CreateAcademyScreen({super.key});
+  final Academy? academy;
+  
+  const CreateAcademyScreen({super.key, this.academy});
 
   @override
   State<CreateAcademyScreen> createState() => _CreateAcademyScreenState();
@@ -35,9 +38,29 @@ class _CreateAcademyScreenState extends State<CreateAcademyScreen> {
   final _descriptionController = TextEditingController();
   final _latController = TextEditingController();
   final _lonController = TextEditingController();
-  final Set<String> _selectedSpecialities = {};
+  Set<String> _selectedSpecialities = {};
   XFile? _pickedImage;
   Uint8List? _imageBytes;
+
+  @override
+  void initState() {
+    super.initState();
+    _populateFields();
+  }
+
+  void _populateFields() {
+    if (widget.academy != null) {
+      final academy = widget.academy!;
+      _nameController.text = academy.name;
+      _cityController.text = academy.city;
+      _addressController.text = academy.address;
+      _descriptionController.text = academy.description;
+      _selectedSpecialities = Set.from(academy.specialities);
+      if (academy.latitude != null) _latController.text = academy.latitude.toString();
+      if (academy.longitude != null) _lonController.text = academy.longitude.toString();
+      // Note: We don't populate image bytes as we'll keep the existing image unless user changes it
+    }
+  }
 
   @override
   void dispose() {
@@ -62,9 +85,11 @@ class _CreateAcademyScreenState extends State<CreateAcademyScreen> {
     }
   }
 
+  bool get _isEditMode => widget.academy != null;
+
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
-    if (_pickedImage == null) {
+    if (_pickedImage == null && !_isEditMode) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please select a cover image')),
       );
@@ -73,18 +98,34 @@ class _CreateAcademyScreenState extends State<CreateAcademyScreen> {
     final tokenState = context.read<TokenBloc>().state;
     if (tokenState is! TokenRetrieved) return;
 
-    context.read<MyAcademyBloc>().add(CreateAcademy(
-          token: tokenState.token,
-          name: _nameController.text.trim(),
-          city: _cityController.text.trim(),
-          address: _addressController.text.trim(),
-          description: _descriptionController.text.trim(),
-          specialities: _selectedSpecialities.toList(),
-          pictureBytes: _imageBytes!,
-          pictureFilename: _pickedImage!.name,
-          latitude: double.tryParse(_latController.text),
-          longitude: double.tryParse(_lonController.text),
-        ));
+    if (_isEditMode) {
+      context.read<MyAcademyBloc>().add(UpdateAcademy(
+            token: tokenState.token,
+            academyId: widget.academy!.id,
+            name: _nameController.text.trim(),
+            city: _cityController.text.trim(),
+            address: _addressController.text.trim(),
+            description: _descriptionController.text.trim(),
+            specialities: _selectedSpecialities.toList(),
+            pictureBytes: _imageBytes,
+            pictureFilename: _pickedImage?.name,
+            latitude: double.tryParse(_latController.text),
+            longitude: double.tryParse(_lonController.text),
+          ));
+    } else {
+      context.read<MyAcademyBloc>().add(CreateAcademy(
+            token: tokenState.token,
+            name: _nameController.text.trim(),
+            city: _cityController.text.trim(),
+            address: _addressController.text.trim(),
+            description: _descriptionController.text.trim(),
+            specialities: _selectedSpecialities.toList(),
+            pictureBytes: _imageBytes!,
+            pictureFilename: _pickedImage!.name,
+            latitude: double.tryParse(_latController.text),
+            longitude: double.tryParse(_lonController.text),
+          ));
+    }
   }
 
   @override
@@ -108,7 +149,7 @@ class _CreateAcademyScreenState extends State<CreateAcademyScreen> {
           ),
         ),
         title: Text(
-          'New Academy',
+          _isEditMode ? 'Edit Academy' : 'New Academy',
           style: AppTextStyles.subtitle.copyWith(
             fontWeight: FontWeight.w600,
             color: AppColors.onSurface,
@@ -124,11 +165,20 @@ class _CreateAcademyScreenState extends State<CreateAcademyScreen> {
         ),
       ),
       body: BlocListener<MyAcademyBloc, MyAcademyState>(
-        listenWhen: (_, s) => s is AcademyCreated || s is AcademyCreateFailed,
+        listenWhen: (_, s) => 
+            s is AcademyCreated || s is AcademyCreateFailed ||
+            s is AcademyUpdated || s is AcademyUpdateFailed,
         listener: (context, state) {
-          if (state is AcademyCreated) {
+          if (state is AcademyCreated || state is AcademyUpdated) {
             context.pop();
           } else if (state is AcademyCreateFailed) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: AppColors.errorColor,
+              ),
+            );
+          } else if (state is AcademyUpdateFailed) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.message),
@@ -141,16 +191,22 @@ class _CreateAcademyScreenState extends State<CreateAcademyScreen> {
           buildWhen: (_, s) =>
               s is AcademyCreating ||
               s is AcademyCreated ||
-              s is AcademyCreateFailed,
+              s is AcademyCreateFailed ||
+              s is AcademyUpdating ||
+              s is AcademyUpdated ||
+              s is AcademyUpdateFailed,
           builder: (context, state) {
-            final isLoading = state is AcademyCreating;
+            final isLoading = state is AcademyCreating || state is AcademyUpdating;
             return Form(
               key: _formKey,
               child: ListView(
                 padding: const EdgeInsets.all(AppSpacing.lg),
                 children: [
                   _ImagePickerCard(
-                      imageBytes: _imageBytes, onTap: isLoading ? null : _pickImage),
+                    imageBytes: _imageBytes, 
+                    existingImageUrl: _isEditMode ? widget.academy?.image : null,
+                    onTap: isLoading ? null : _pickImage
+                  ),
                   const SizedBox(height: AppSpacing.lg),
                   _FieldLabel('Academy Name'),
                   const SizedBox(height: AppSpacing.sm),
@@ -246,7 +302,7 @@ class _CreateAcademyScreenState extends State<CreateAcademyScreen> {
                               child: CircularProgressIndicator(
                                   color: Colors.white, strokeWidth: 2),
                             )
-                          : Text('Create Academy',
+                          : Text(_isEditMode ? 'Update Academy' : 'Create Academy',
                               style: AppTextStyles.buttonLabel
                                   .copyWith(color: Colors.white)),
                     ),
@@ -389,9 +445,14 @@ class _SpecialitiesSelector extends StatelessWidget {
 
 class _ImagePickerCard extends StatelessWidget {
   final Uint8List? imageBytes;
+  final String? existingImageUrl;
   final VoidCallback? onTap;
 
-  const _ImagePickerCard({required this.imageBytes, required this.onTap});
+  const _ImagePickerCard({
+    required this.imageBytes, 
+    this.existingImageUrl, 
+    required this.onTap
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -408,48 +469,93 @@ class _ImagePickerCard extends StatelessWidget {
               style: BorderStyle.solid),
         ),
         clipBehavior: Clip.antiAlias,
-        child: imageBytes != null
-            ? Stack(
-                fit: StackFit.expand,
+        child: _buildImageContent(),
+      ),
+    );
+  }
+
+  Widget _buildImageContent() {
+    if (imageBytes != null) {
+      return Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.memory(imageBytes!, fit: BoxFit.cover),
+          Positioned(
+            bottom: AppSpacing.sm,
+            right: AppSpacing.sm,
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md, vertical: AppSpacing.xs),
+              decoration: BoxDecoration(
+                color: Colors.black54,
+                borderRadius:
+                    BorderRadius.circular(AppBorderRadius.pill),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Image.memory(imageBytes!, fit: BoxFit.cover),
-                  Positioned(
-                    bottom: AppSpacing.sm,
-                    right: AppSpacing.sm,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.md, vertical: AppSpacing.xs),
-                      decoration: BoxDecoration(
-                        color: Colors.black54,
-                        borderRadius:
-                            BorderRadius.circular(AppBorderRadius.pill),
-                      ),
-                      child: const Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.edit, color: Colors.white, size: 14),
-                          SizedBox(width: AppSpacing.xs),
-                          Text('Change',
-                              style: TextStyle(
-                                  color: Colors.white, fontSize: 12)),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              )
-            : Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.add_photo_alternate_outlined,
-                      size: 40, color: AppColors.outlineVariant),
-                  const SizedBox(height: AppSpacing.sm),
-                  Text('Tap to add a cover photo',
-                      style: AppTextStyles.caption
-                          .copyWith(color: AppColors.outline)),
+                  Icon(Icons.edit, color: Colors.white, size: 14),
+                  SizedBox(width: AppSpacing.xs),
+                  Text('Change',
+                      style: TextStyle(
+                          color: Colors.white, fontSize: 12)),
                 ],
               ),
-      ),
+            ),
+          ),
+        ],
+      );
+    }
+    
+    if (existingImageUrl != null && existingImageUrl!.isNotEmpty) {
+      return Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.network(existingImageUrl!, fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => _placeholder()),
+          Positioned(
+            bottom: AppSpacing.sm,
+            right: AppSpacing.sm,
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md, vertical: AppSpacing.xs),
+              decoration: BoxDecoration(
+                color: Colors.black54,
+                borderRadius:
+                    BorderRadius.circular(AppBorderRadius.pill),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.edit, color: Colors.white, size: 14),
+                  SizedBox(width: AppSpacing.xs),
+                  Text('Change',
+                      style: TextStyle(
+                          color: Colors.white, fontSize: 12)),
+                ],
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+    
+    return _placeholder();
+  }
+
+  Widget _placeholder() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Icon(Icons.add_photo_alternate_outlined,
+            size: 40, color: AppColors.outlineVariant),
+        const SizedBox(height: AppSpacing.sm),
+        Text(existingImageUrl != null 
+            ? 'Tap to change the cover photo'
+            : 'Tap to add a cover photo',
+            style: AppTextStyles.caption
+                .copyWith(color: AppColors.outline)),
+      ],
     );
   }
 }
