@@ -8,6 +8,7 @@ import 'package:sibaha_app/core/theme/app_colors.dart';
 import 'package:sibaha_app/core/theme/app_spacing.dart';
 import 'package:sibaha_app/core/theme/app_text_styles.dart';
 import 'package:sibaha_app/data/models/academy.dart';
+import 'package:sibaha_app/data/models/pool_summary_dto.dart';
 import 'package:sibaha_app/presentation/blocs/my_academy_bloc/my_academy_bloc.dart';
 import 'package:sibaha_app/presentation/blocs/token_bloc/token_bloc.dart';
 
@@ -41,6 +42,7 @@ class _CreateAcademyScreenState extends State<CreateAcademyScreen> {
   Set<String> _selectedSpecialities = {};
   XFile? _pickedImage;
   Uint8List? _imageBytes;
+  List<PoolSummaryDTO> _pools = [];
 
   @override
   void initState() {
@@ -58,7 +60,7 @@ class _CreateAcademyScreenState extends State<CreateAcademyScreen> {
       _selectedSpecialities = Set.from(academy.specialities);
       if (academy.latitude != null) _latController.text = academy.latitude.toString();
       if (academy.longitude != null) _lonController.text = academy.longitude.toString();
-      // Note: We don't populate image bytes as we'll keep the existing image unless user changes it
+      _pools = List.from(academy.poolList);
     }
   }
 
@@ -86,6 +88,48 @@ class _CreateAcademyScreenState extends State<CreateAcademyScreen> {
   }
 
   bool get _isEditMode => widget.academy != null;
+
+  void _openAddPoolSheet([PoolSummaryDTO? pool]) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) => BlocProvider.value(
+        value: context.read<MyAcademyBloc>(),
+        child: _AddPoolSheet(academyId: widget.academy!.id, pool: pool),
+      ),
+    );
+  }
+
+  void _confirmDeletePool(PoolSummaryDTO pool) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Delete Pool'),
+        content: Text('Are you sure you want to delete "${pool.name}"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+              final tokenState = context.read<TokenBloc>().state;
+              if (tokenState is! TokenRetrieved) return;
+              context.read<MyAcademyBloc>().add(DeletePool(
+                    token: tokenState.token,
+                    academyId: widget.academy!.id,
+                    poolId: pool.id,
+                  ));
+            },
+            child: Text('Delete',
+                style: TextStyle(color: AppColors.errorColor)),
+          ),
+        ],
+      ),
+    );
+  }
 
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
@@ -165,12 +209,45 @@ class _CreateAcademyScreenState extends State<CreateAcademyScreen> {
         ),
       ),
       body: BlocListener<MyAcademyBloc, MyAcademyState>(
-        listenWhen: (_, s) => 
+        listenWhen: (_, s) =>
             s is AcademyCreated || s is AcademyCreateFailed ||
-            s is AcademyUpdated || s is AcademyUpdateFailed,
+            s is AcademyUpdated || s is AcademyUpdateFailed ||
+            s is PoolCreated || s is PoolUpdated ||
+            s is PoolDeleted || s is PoolDeleteFailed,
         listener: (context, state) {
           if (state is AcademyCreated || state is AcademyUpdated) {
             context.pop();
+          } else if (state is PoolCreated) {
+            setState(() {
+              _pools.add(PoolSummaryDTO(
+                id: state.pool.id,
+                name: state.pool.name,
+                image: state.pool.image,
+                speciality: state.pool.speciality,
+                dimension: state.pool.dimension,
+                heated: state.pool.heated,
+                showers: state.pool.showers,
+              ));
+            });
+          } else if (state is PoolUpdated) {
+            setState(() {
+              final i = _pools.indexWhere((p) => p.id == state.pool.id);
+              if (i != -1) {
+                _pools[i] = PoolSummaryDTO(
+                  id: state.pool.id,
+                  name: state.pool.name,
+                  image: state.pool.image,
+                  speciality: state.pool.speciality,
+                  dimension: state.pool.dimension,
+                  heated: state.pool.heated,
+                  showers: state.pool.showers,
+                );
+              }
+            });
+          } else if (state is PoolDeleted) {
+            setState(() {
+              _pools.removeWhere((p) => p.id == state.poolId);
+            });
           } else if (state is AcademyCreateFailed) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -179,6 +256,13 @@ class _CreateAcademyScreenState extends State<CreateAcademyScreen> {
               ),
             );
           } else if (state is AcademyUpdateFailed) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: AppColors.errorColor,
+              ),
+            );
+          } else if (state is PoolDeleteFailed) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.message),
@@ -282,6 +366,15 @@ class _CreateAcademyScreenState extends State<CreateAcademyScreen> {
                       ),
                     ],
                   ),
+                  if (_isEditMode) ...[
+                    const SizedBox(height: AppSpacing.lg),
+                    _PoolsSection(
+                      pools: _pools,
+                      onAddPressed: isLoading ? null : () => _openAddPoolSheet(),
+                      onEditPool: isLoading ? null : _openAddPoolSheet,
+                      onDeletePool: isLoading ? null : _confirmDeletePool,
+                    ),
+                  ],
                   const SizedBox(height: AppSpacing.xxl),
                   SizedBox(
                     height: 48,
@@ -550,12 +643,445 @@ class _ImagePickerCard extends StatelessWidget {
         const Icon(Icons.add_photo_alternate_outlined,
             size: 40, color: AppColors.outlineVariant),
         const SizedBox(height: AppSpacing.sm),
-        Text(existingImageUrl != null 
+        Text(existingImageUrl != null
             ? 'Tap to change the cover photo'
             : 'Tap to add a cover photo',
             style: AppTextStyles.caption
                 .copyWith(color: AppColors.outline)),
       ],
+    );
+  }
+}
+
+class _PoolsSection extends StatelessWidget {
+  final List<PoolSummaryDTO> pools;
+  final VoidCallback? onAddPressed;
+  final void Function(PoolSummaryDTO)? onEditPool;
+  final void Function(PoolSummaryDTO)? onDeletePool;
+
+  const _PoolsSection({
+    required this.pools,
+    this.onAddPressed,
+    this.onEditPool,
+    this.onDeletePool,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const _FieldLabel('Pools'),
+        const SizedBox(height: AppSpacing.sm),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(AppBorderRadius.md),
+            border: Border.all(color: AppColors.outlineVariant),
+          ),
+          child: Column(
+            children: [
+              if (pools.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: AppSpacing.lg, horizontal: AppSpacing.lg),
+                  child: Center(
+                    child: Text('No pools yet',
+                        style: AppTextStyles.caption
+                            .copyWith(color: AppColors.outline)),
+                  ),
+                )
+              else
+                ...pools.map((pool) => _PoolTile(
+                      pool: pool,
+                      onEdit: onEditPool != null ? () => onEditPool!(pool) : null,
+                      onDelete:
+                          onDeletePool != null ? () => onDeletePool!(pool) : null,
+                    )),
+              const Divider(height: 1, thickness: 1, color: AppColors.outlineVariant),
+              InkWell(
+                onTap: onAddPressed,
+                borderRadius: const BorderRadius.vertical(
+                    bottom: Radius.circular(AppBorderRadius.md)),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: AppSpacing.md, horizontal: AppSpacing.lg),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.add,
+                          color: onAddPressed != null
+                              ? AppColors.primary
+                              : AppColors.outlineVariant,
+                          size: 18),
+                      const SizedBox(width: AppSpacing.xs),
+                      Text('Add Pool',
+                          style: AppTextStyles.buttonLabel.copyWith(
+                              color: onAddPressed != null
+                                  ? AppColors.primary
+                                  : AppColors.outlineVariant)),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _PoolTile extends StatelessWidget {
+  final PoolSummaryDTO pool;
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
+
+  const _PoolTile({required this.pool, this.onEdit, this.onDelete});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(AppBorderRadius.sm),
+            child: pool.image != null && pool.image!.isNotEmpty
+                ? Image.network(
+                    pool.image!,
+                    width: 40,
+                    height: 40,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => _poolImagePlaceholder(),
+                  )
+                : _poolImagePlaceholder(),
+          ),
+          const SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: Text(pool.name,
+                style: AppTextStyles.fieldInput,
+                overflow: TextOverflow.ellipsis),
+          ),
+          IconButton(
+            icon: const Icon(Icons.edit_outlined, size: 18),
+            color: AppColors.primary,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+            visualDensity: VisualDensity.compact,
+            onPressed: onEdit,
+            tooltip: 'Edit pool',
+          ),
+          const SizedBox(width: AppSpacing.sm),
+          IconButton(
+            icon: const Icon(Icons.delete_outline, size: 18),
+            color: AppColors.errorColor,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+            visualDensity: VisualDensity.compact,
+            onPressed: onDelete,
+            tooltip: 'Delete pool',
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _poolImagePlaceholder() {
+    return Container(
+      width: 40,
+      height: 40,
+      decoration: BoxDecoration(
+        color: AppColors.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(AppBorderRadius.sm),
+      ),
+      child: const Icon(Icons.pool, color: AppColors.outlineVariant, size: 20),
+    );
+  }
+}
+
+class _AddPoolSheet extends StatefulWidget {
+  final int academyId;
+  final PoolSummaryDTO? pool;
+
+  const _AddPoolSheet({required this.academyId, this.pool});
+
+  @override
+  State<_AddPoolSheet> createState() => _AddPoolSheetState();
+}
+
+class _AddPoolSheetState extends State<_AddPoolSheet> {
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _dimensionController = TextEditingController();
+  late final Set<String> _selectedSpecialities;
+  late bool _heated;
+  late int _showers;
+  XFile? _pickedImage;
+  Uint8List? _imageBytes;
+
+  bool get _isEditMode => widget.pool != null;
+
+  @override
+  void initState() {
+    super.initState();
+    final pool = widget.pool;
+    if (pool != null) {
+      _nameController.text = pool.name;
+      _dimensionController.text =
+          pool.dimension.isNotEmpty ? pool.dimension.first : '';
+      _selectedSpecialities = Set.from(pool.speciality);
+      _heated = pool.heated;
+      _showers = pool.showers;
+    } else {
+      _selectedSpecialities = {};
+      _heated = false;
+      _showers = 0;
+    }
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _dimensionController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pickImage() async {
+    final image = await ImagePicker()
+        .pickImage(source: ImageSource.gallery, imageQuality: 80);
+    if (image != null) {
+      final bytes = await image.readAsBytes();
+      setState(() {
+        _pickedImage = image;
+        _imageBytes = bytes;
+      });
+    }
+  }
+
+  void _submit() {
+    if (!_formKey.currentState!.validate()) return;
+    final tokenState = context.read<TokenBloc>().state;
+    if (tokenState is! TokenRetrieved) return;
+    final dimension = _dimensionController.text.trim().isEmpty
+        ? <String>[]
+        : [_dimensionController.text.trim()];
+    if (_isEditMode) {
+      context.read<MyAcademyBloc>().add(UpdatePool(
+            token: tokenState.token,
+            academyId: widget.academyId,
+            poolId: widget.pool!.id,
+            name: _nameController.text.trim(),
+            speciality: _selectedSpecialities.toList(),
+            dimension: dimension,
+            heated: _heated,
+            showers: _showers,
+            pictureBytes: _imageBytes,
+            pictureFilename: _pickedImage?.name,
+          ));
+    } else {
+      context.read<MyAcademyBloc>().add(CreatePool(
+            token: tokenState.token,
+            academyId: widget.academyId,
+            name: _nameController.text.trim(),
+            speciality: _selectedSpecialities.toList(),
+            dimension: dimension,
+            heated: _heated,
+            showers: _showers,
+            pictureBytes: _imageBytes,
+            pictureFilename: _pickedImage?.name,
+          ));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<MyAcademyBloc, MyAcademyState>(
+      listenWhen: (_, s) =>
+          s is PoolCreated || s is PoolCreateFailed ||
+          s is PoolUpdated || s is PoolUpdateFailed,
+      listener: (context, state) {
+        if (state is PoolCreated || state is PoolUpdated) {
+          Navigator.of(context).pop();
+        } else if (state is PoolCreateFailed) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: AppColors.errorColor,
+            ),
+          );
+        } else if (state is PoolUpdateFailed) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: AppColors.errorColor,
+            ),
+          );
+        }
+      },
+      child: BlocBuilder<MyAcademyBloc, MyAcademyState>(
+        buildWhen: (_, s) =>
+            s is PoolCreating || s is PoolCreated || s is PoolCreateFailed ||
+            s is PoolUpdating || s is PoolUpdated || s is PoolUpdateFailed,
+        builder: (context, state) {
+          final isLoading = state is PoolCreating || state is PoolUpdating;
+          return Padding(
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.viewInsetsOf(context).bottom),
+            child: Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(AppBorderRadius.lg)),
+              ),
+              child: Form(
+                key: _formKey,
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(
+                      AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.xxl),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Center(
+                        child: Container(
+                          width: 40,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: AppColors.outlineVariant,
+                            borderRadius:
+                                BorderRadius.circular(AppBorderRadius.pill),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+                      Text(
+                        _isEditMode ? 'Edit Pool' : 'Add Pool',
+                        style: AppTextStyles.subtitle
+                            .copyWith(fontWeight: FontWeight.w600),
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+                      _ImagePickerCard(
+                        imageBytes: _imageBytes,
+                        existingImageUrl:
+                            _isEditMode ? widget.pool?.image : null,
+                        onTap: isLoading ? null : _pickImage,
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+                      const _FieldLabel('Pool Name'),
+                      const SizedBox(height: AppSpacing.sm),
+                      _InputField(
+                        controller: _nameController,
+                        hint: 'e.g. Main Pool',
+                        enabled: !isLoading,
+                        validator: (v) => (v == null || v.trim().isEmpty)
+                            ? 'This field is required'
+                            : null,
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+                      const _FieldLabel('Specialities'),
+                      const SizedBox(height: AppSpacing.sm),
+                      _SpecialitiesSelector(
+                        selected: _selectedSpecialities,
+                        enabled: !isLoading,
+                        onToggle: (s) => setState(() {
+                          _selectedSpecialities.contains(s)
+                              ? _selectedSpecialities.remove(s)
+                              : _selectedSpecialities.add(s);
+                        }),
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+                      const _FieldLabel('Dimensions (optional)'),
+                      const SizedBox(height: AppSpacing.sm),
+                      _InputField(
+                        controller: _dimensionController,
+                        hint: 'e.g. 25m × 10m',
+                        enabled: !isLoading,
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text('Heated',
+                                style: AppTextStyles.fieldLabel),
+                          ),
+                          Switch(
+                            value: _heated,
+                            onChanged: isLoading
+                                ? null
+                                : (v) => setState(() => _heated = v),
+                            activeThumbColor: AppColors.primary,
+                            activeTrackColor: AppColors.primary.withValues(alpha: 0.4),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text('Showers',
+                                style: AppTextStyles.fieldLabel),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.remove_circle_outline),
+                            color: AppColors.primary,
+                            onPressed: isLoading || _showers == 0
+                                ? null
+                                : () => setState(() => _showers--),
+                          ),
+                          SizedBox(
+                            width: 32,
+                            child: Text(
+                              '$_showers',
+                              textAlign: TextAlign.center,
+                              style: AppTextStyles.fieldInput,
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.add_circle_outline),
+                            color: AppColors.primary,
+                            onPressed: isLoading
+                                ? null
+                                : () => setState(() => _showers++),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: AppSpacing.xxl),
+                      SizedBox(
+                        height: 48,
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: isLoading ? null : _submit,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            disabledBackgroundColor:
+                                AppColors.primary.withOpacity(0.6),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: AppBorderRadius.pillRadius),
+                            elevation: 0,
+                          ),
+                          child: isLoading
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                      color: Colors.white, strokeWidth: 2),
+                                )
+                              : Text(
+                                  _isEditMode ? 'Update Pool' : 'Save Pool',
+                                  style: AppTextStyles.buttonLabel
+                                      .copyWith(color: Colors.white)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }

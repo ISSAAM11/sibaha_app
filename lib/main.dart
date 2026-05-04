@@ -52,6 +52,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (_) => MyAcademyBloc(
             academyRepository: getIt<AcademyRepository>(),
+            poolRepository: getIt<PoolRepository>(),
           ),
         ),
         BlocProvider(

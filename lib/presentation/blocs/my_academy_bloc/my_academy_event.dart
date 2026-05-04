@@ -34,6 +34,68 @@ class CreateAcademy extends MyAcademyEvent {
   });
 }
 
+class UpdatePool extends MyAcademyEvent {
+  final String token;
+  final int academyId;
+  final int poolId;
+  final String name;
+  final List<String> speciality;
+  final List<String> dimension;
+  final bool heated;
+  final int showers;
+  final Uint8List? pictureBytes;
+  final String? pictureFilename;
+
+  UpdatePool({
+    required this.token,
+    required this.academyId,
+    required this.poolId,
+    required this.name,
+    required this.speciality,
+    required this.dimension,
+    required this.heated,
+    required this.showers,
+    this.pictureBytes,
+    this.pictureFilename,
+  });
+}
+
+class DeletePool extends MyAcademyEvent {
+  final String token;
+  final int academyId;
+  final int poolId;
+
+  DeletePool({
+    required this.token,
+    required this.academyId,
+    required this.poolId,
+  });
+}
+
+class CreatePool extends MyAcademyEvent {
+  final String token;
+  final int academyId;
+  final String name;
+  final List<String> speciality;
+  final List<String> dimension;
+  final bool heated;
+  final int showers;
+  final Uint8List? pictureBytes;
+  final String? pictureFilename;
+
+  CreatePool({
+    required this.token,
+    required this.academyId,
+    required this.name,
+    required this.speciality,
+    required this.dimension,
+    required this.heated,
+    required this.showers,
+    this.pictureBytes,
+    this.pictureFilename,
+  });
+}
+
 class UpdateAcademy extends MyAcademyEvent {
   final String token;
   final int academyId;

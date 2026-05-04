@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sibaha_app/core/theme/app_colors.dart';
 import 'package:sibaha_app/core/theme/app_spacing.dart';
 import 'package:sibaha_app/core/theme/app_text_styles.dart';
@@ -118,10 +119,17 @@ class _MyAcademyList extends StatelessWidget {
               AppSpacing.xxl,
             ),
             itemCount: state.academies.length,
-            itemBuilder: (context, index) => AcademyCard(
-              index: index,
-              academy: state.academies[index],
-            ),
+            itemBuilder: (context, index) {
+              final academy = state.academies[index];
+              return AcademyCard(
+                index: index,
+                academy: academy,
+                onTap: () => context.push(
+                  '/MyAcademies/edit/${academy.id}',
+                  extra: academy,
+                ),
+              );
+            },
           );
         }
         return const SizedBox();

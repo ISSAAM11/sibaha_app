@@ -1,8 +1,4 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sibaha_app/core/theme/app_border_radius.dart';
 import 'package:sibaha_app/core/theme/app_colors.dart';
@@ -10,21 +6,20 @@ import 'package:sibaha_app/core/theme/app_spacing.dart';
 import 'package:sibaha_app/core/theme/app_text_styles.dart';
 import 'package:sibaha_app/core/utils/static_data.dart';
 import 'package:sibaha_app/data/models/academy.dart';
-import 'package:sibaha_app/presentation/blocs/auth_bloc/auth_bloc.dart';
-import 'package:sibaha_app/data/services/auth_service.dart';
 
 class AcademyCard extends StatelessWidget {
   final int index;
   final Academy academy;
+  final VoidCallback? onTap;
 
-  const AcademyCard({super.key, required this.index, required this.academy});
+  const AcademyCard({super.key, required this.index, required this.academy, this.onTap});
 
   @override
   Widget build(BuildContext context) {
     final staticAcademy = academies[index % academies.length];
 
     return GestureDetector(
-      onTap: () => _handleNavigation(context),
+      onTap: onTap ?? () => context.push('/AcademyDetails/${academy.id}'),
       child: Container(
         margin: const EdgeInsets.only(bottom: AppSpacing.lg),
         height: 220,
@@ -66,33 +61,6 @@ class AcademyCard extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  void _handleNavigation(BuildContext context) async {
-    // Get user type from secure storage
-    const storage = FlutterSecureStorage();
-    final userDataString = await storage.read(key: 'userData');
-    
-    if (userDataString != null) {
-      try {
-        final userData = json.decode(userDataString) as Map;
-        final userType = userData['user_type'] as String?;
-        
-        if (userType == 'academy_owner') {
-          // Navigate to edit screen for academy owners
-          context.push('/MyAcademies/edit/${academy.id}', extra: academy);
-        } else {
-          // Navigate to details screen for other users
-          context.push('/AcademyDetails/${academy.id}');
-        }
-      } catch (_) {
-        // Fallback to details screen if there's an error
-        context.push('/AcademyDetails/${academy.id}');
-      }
-    } else {
-      // Fallback to details screen if no user data
-      context.push('/AcademyDetails/${academy.id}');
-    }
   }
 
   Widget _buildBackground() {
@@ -265,4 +233,3 @@ class _SpecialityChip extends StatelessWidget {
     );
   }
 }
-
