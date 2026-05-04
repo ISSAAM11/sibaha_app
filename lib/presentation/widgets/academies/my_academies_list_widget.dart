@@ -125,7 +125,7 @@ class _MyAcademyList extends StatelessWidget {
                 index: index,
                 academy: academy,
                 onTap: () => context.push(
-                  '/MyAcademies/edit/${academy.id}',
+                  '/MyAcademies/${academy.id}/dashboard',
                   extra: academy,
                 ),
               );

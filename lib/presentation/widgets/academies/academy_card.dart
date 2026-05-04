@@ -11,8 +11,15 @@ class AcademyCard extends StatelessWidget {
   final int index;
   final Academy academy;
   final VoidCallback? onTap;
+  final EdgeInsetsGeometry margin;
 
-  const AcademyCard({super.key, required this.index, required this.academy, this.onTap});
+  const AcademyCard({
+    super.key,
+    required this.index,
+    required this.academy,
+    this.onTap,
+    this.margin = const EdgeInsets.only(bottom: AppSpacing.lg),
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +28,7 @@ class AcademyCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap ?? () => context.push('/AcademyDetails/${academy.id}'),
       child: Container(
-        margin: const EdgeInsets.only(bottom: AppSpacing.lg),
+        margin: margin,
         height: 220,
         decoration: BoxDecoration(
           borderRadius: AppBorderRadius.lgRadius,
