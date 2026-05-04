@@ -61,13 +61,20 @@ class AcademyOwnerDashboardScreen extends StatelessWidget {
             icon: Icons.sports_outlined,
             title: 'Coaches',
             subtitle: 'See the coaches assigned to your academy',
-            onTap: () => context.push('/AcademyCoachs'),
+            onTap: () => context.push(
+              '/MyAcademies/${academy.id}/assigned-coaches',
+              extra: {
+                'academyId': academy.id,
+                'academyName': academy.name,
+              },
+            ),
           ),
           const SizedBox(height: AppSpacing.md),
           _DashboardSection(
             icon: Icons.person_add_outlined,
             title: 'Invite a Coach',
             subtitle: 'Send an invitation to a coach to join your academy',
+            onTap: () => context.push('/MyAcademies/${academy.id}/invite-coaches'),
           ),
           const SizedBox(height: AppSpacing.md),
           _DashboardSection(

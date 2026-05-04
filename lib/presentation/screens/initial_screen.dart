@@ -12,7 +12,9 @@ import 'package:sibaha_app/presentation/screens/coaches_screen.dart';
 import 'package:sibaha_app/presentation/screens/academy_details_screen.dart';
 import 'package:sibaha_app/presentation/screens/academies_screen.dart';
 import 'package:sibaha_app/presentation/screens/create_academy_screen.dart';
+import 'package:sibaha_app/presentation/screens/academy_assigned_coaches_screen.dart';
 import 'package:sibaha_app/presentation/screens/academy_owner_dashboard_screen.dart';
+import 'package:sibaha_app/presentation/screens/invite_coaches_screen.dart';
 import 'package:sibaha_app/presentation/screens/my_academies_screen.dart';
 import 'package:sibaha_app/presentation/screens/coach/my_schedule_screen.dart';
 import 'package:sibaha_app/presentation/screens/home_screen.dart';
@@ -122,6 +124,27 @@ class _InitialScreenState extends State<InitialScreen> {
             path: '/MyAcademies',
             pageBuilder: (context, state) =>
                 const NoTransitionPage(child: MyAcademiesScreen()),
+          ),
+          GoRoute(
+            path: '/MyAcademies/:id/assigned-coaches',
+            pageBuilder: (context, state) {
+              final extra = state.extra as Map<String, dynamic>;
+              return NoTransitionPage(
+                child: AcademyAssignedCoachesScreen(
+                  academyId: extra['academyId'] as int,
+                  academyName: extra['academyName'] as String,
+                ),
+              );
+            },
+          ),
+          GoRoute(
+            path: '/MyAcademies/:id/invite-coaches',
+            pageBuilder: (context, state) {
+              final academyId = int.parse(state.pathParameters['id']!);
+              return NoTransitionPage(
+                child: InviteCoachesScreen(academyId: academyId),
+              );
+            },
           ),
           GoRoute(
             path: '/MyAcademies/:id/dashboard',

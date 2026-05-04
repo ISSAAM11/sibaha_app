@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:sibaha_app/core/exceptions/app_exceptions.dart';
 import 'package:sibaha_app/core/utils/server_config.dart';
 import 'package:sibaha_app/data/models/academy.dart';
+import 'package:sibaha_app/data/models/invitation.dart';
 import 'package:sibaha_app/data/models/review.dart';
 
 class AcademyService {
@@ -169,6 +170,54 @@ class AcademyService {
       } catch (parseError) {
         throw ServerException(response.statusCode,
             'Failed to parse Review: ${parseError.toString()}');
+      }
+    } on DioException catch (e) {
+      handleDioException(e);
+    } catch (e) {
+      if (e is AppException) rethrow;
+      throw ServerException(null, 'Unexpected error occurred: ${e.toString()}');
+    }
+  }
+
+  Future<List<Invitation>> fetchInvitations(String token, int academyId) async {
+    final url = Uri.parse("$httpServerPath/api/my-academies/$academyId/invitations/");
+    try {
+      final response = await _dio.getUri(
+        url,
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+      handleNoDataReceivedException(response);
+      try {
+        return (response.data['data'] as List)
+            .map((e) => Invitation.fromJson(e as Map<String, dynamic>))
+            .toList();
+      } catch (parseError) {
+        throw ServerException(
+            response.statusCode, 'Failed to parse Invitation: $parseError');
+      }
+    } on DioException catch (e) {
+      handleDioException(e);
+    } catch (e) {
+      if (e is AppException) rethrow;
+      throw ServerException(null, 'Unexpected error occurred: ${e.toString()}');
+    }
+  }
+
+  Future<Invitation> sendInvitation(
+      String token, int academyId, int coachId) async {
+    final url = Uri.parse("$httpServerPath/api/my-academies/$academyId/invitations/");
+    try {
+      final response = await _dio.postUri(
+        url,
+        data: {'to_coach': coachId},
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+      handleNoDataReceivedException(response);
+      try {
+        return Invitation.fromJson(response.data['data'] as Map<String, dynamic>);
+      } catch (parseError) {
+        throw ServerException(
+            response.statusCode, 'Failed to parse Invitation: $parseError');
       }
     } on DioException catch (e) {
       handleDioException(e);
