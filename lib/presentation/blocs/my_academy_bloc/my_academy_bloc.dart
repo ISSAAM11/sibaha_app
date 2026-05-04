@@ -18,6 +18,7 @@ class MyAcademyBloc extends Bloc<MyAcademyEvent, MyAcademyState> {
         super(MyAcademyInitial()) {
     on<FetchMyAcademies>(_onFetchMyAcademies);
     on<CreateAcademy>(_onCreateAcademy);
+    on<UpdateAcademy>(_onUpdateAcademy);
   }
 
   Future<void> _onFetchMyAcademies(
@@ -56,6 +57,39 @@ class MyAcademyBloc extends Bloc<MyAcademyEvent, MyAcademyState> {
       emit(MyAcademyTokenExpired());
     } catch (e) {
       emit(AcademyCreateFailed(e.toString()));
+    }
+  }
+
+  Future<void> _onUpdateAcademy(
+      UpdateAcademy event, Emitter<MyAcademyState> emit) async {
+    emit(AcademyUpdating());
+    try {
+      final academy = await _academyRepository.updateAcademy(
+        token: event.token,
+        academyId: event.academyId,
+        name: event.name,
+        city: event.city,
+        address: event.address,
+        description: event.description,
+        specialities: event.specialities,
+        pictureBytes: event.pictureBytes,
+        pictureFilename: event.pictureFilename,
+        latitude: event.latitude,
+        longitude: event.longitude,
+      );
+      
+      // Update the academy in the local list
+      final index = _academies.indexWhere((a) => a.id == event.academyId);
+      if (index != -1) {
+        _academies[index] = academy;
+      }
+      
+      emit(AcademyUpdated(academy));
+      emit(MyAcademyLoaded(_academies));
+    } on TokenExpiredException {
+      emit(MyAcademyTokenExpired());
+    } catch (e) {
+      emit(AcademyUpdateFailed(e.toString()));
     }
   }
 }
