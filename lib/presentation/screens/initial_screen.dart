@@ -175,8 +175,15 @@ class _InitialScreenState extends State<InitialScreen> {
           ),
           GoRoute(
             path: '/ReviewList',
-            pageBuilder: (context, state) =>
-                NoTransitionPage(child: ReviewScreen()),
+            pageBuilder: (context, state) {
+              final extra = state.extra as Map<String, dynamic>;
+              return NoTransitionPage(
+                child: ReviewScreen(
+                  academyId: extra['academyId'] as int,
+                  academyName: extra['academyName'] as String,
+                ),
+              );
+            },
           ),
           GoRoute(
             path: '/UserDetails/:interface',

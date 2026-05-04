@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:sibaha_app/data/models/academy.dart';
+import 'package:sibaha_app/data/models/review.dart';
 import 'package:sibaha_app/data/services/academy_service.dart';
 
 class AcademyRepository {
@@ -40,6 +41,13 @@ class AcademyRepository {
         latitude: latitude,
         longitude: longitude,
       );
+
+  Future<List<Review>> getReviews(String? token, int academyId) =>
+      _service.fetchReviews(token, academyId);
+
+  Future<Review> createReview(
+          String token, int academyId, int rating, String comment) =>
+      _service.createReview(token, academyId, rating, comment);
 
   Future<Academy> updateAcademy({
     required String token,

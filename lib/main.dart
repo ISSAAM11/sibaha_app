@@ -14,6 +14,7 @@ import 'package:sibaha_app/presentation/blocs/coach_bloc/coach_bloc.dart';
 import 'package:sibaha_app/presentation/blocs/pool_bloc/pool_bloc.dart';
 import 'package:sibaha_app/presentation/blocs/pool_details_bloc/pool_details_bloc.dart';
 import 'package:sibaha_app/presentation/blocs/token_bloc/token_bloc.dart';
+import 'package:sibaha_app/presentation/blocs/review_bloc/review_bloc.dart';
 import 'package:sibaha_app/presentation/blocs/user_details_bloc/user_details_bloc.dart';
 import 'package:sibaha_app/presentation/screens/initial_screen.dart';
 
@@ -73,6 +74,11 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (_) => CoachBloc(
             coachRepository: getIt<CoachRepository>(),
+          ),
+        ),
+        BlocProvider(
+          create: (_) => ReviewBloc(
+            academyRepository: getIt<AcademyRepository>(),
           ),
         ),
       ],

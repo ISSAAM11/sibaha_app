@@ -14,6 +14,8 @@ class Academy {
   final String? image;
   final double? latitude;
   final double? longitude;
+  final double? averageRating;
+  final int reviewCount;
 
   Academy({
     required this.id,
@@ -29,6 +31,8 @@ class Academy {
     this.image,
     this.latitude,
     this.longitude,
+    this.averageRating,
+    this.reviewCount = 0,
   });
 
   factory Academy.fromJson(Map<String, dynamic> json) {
@@ -56,6 +60,10 @@ class Academy {
       longitude: json['longitude'] != null
           ? double.tryParse(json['longitude'].toString())
           : null,
+      averageRating: json['average_rating'] != null
+          ? double.tryParse(json['average_rating'].toString())
+          : null,
+      reviewCount: json['review_count'] as int? ?? 0,
     );
   }
 

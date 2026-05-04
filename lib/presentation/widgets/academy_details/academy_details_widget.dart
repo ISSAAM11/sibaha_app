@@ -150,26 +150,43 @@ class _AcademyDetailsWidgetState extends State<AcademyDetailsWidget> {
                                   borderRadius: BorderRadius.zero),
                               side: BorderSide.none,
                             ),
-                            onPressed: () => context.push("/ReviewList"),
+                            onPressed: () async {
+                              await context.push('/ReviewList', extra: {
+                                'academyId': state.academyDetails.id,
+                                'academyName': state.academyDetails.name,
+                              });
+                              if (!context.mounted) return;
+                              final tokenState = context.read<TokenBloc>().state;
+                              final token = tokenState is TokenRetrieved
+                                  ? tokenState.token
+                                  : null;
+                              context
+                                  .read<AcademyDetailsBloc>()
+                                  .add(FetchAcademyDetailsEvent(token, widget.id));
+                            },
                             child: Row(
                               children: [
                                 Row(
                                   children: List.generate(5, (index) {
+                                    final avg = state.academyDetails.averageRating;
+                                    final filled = avg != null && index < avg.round();
                                     return Icon(
-                                      index < 4
-                                          ? Icons.star
-                                          : Icons.star_border,
+                                      filled ? Icons.star : Icons.star_border,
                                       color: Colors.amber,
                                       size: 20,
                                     );
                                   }),
                                 ),
                                 const SizedBox(width: 8),
-                                const Text('4.1 (42)',
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.black87,
-                                        fontWeight: FontWeight.w500)),
+                                Text(
+                                  state.academyDetails.averageRating != null
+                                      ? '${state.academyDetails.averageRating!.toStringAsFixed(1)} (${state.academyDetails.reviewCount})'
+                                      : '--',
+                                  style: const TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.black87,
+                                      fontWeight: FontWeight.w500),
+                                ),
                                 const Spacer(),
                                 Icon(Icons.arrow_forward_ios,
                                     size: 16, color: Colors.grey[600]),
