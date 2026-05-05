@@ -16,6 +16,9 @@ class Academy {
   final double? longitude;
   final double? averageRating;
   final int reviewCount;
+  final double? monthlyPrice;
+  final int coachesCount;
+  final int clientsCount;
 
   Academy({
     required this.id,
@@ -33,6 +36,9 @@ class Academy {
     this.longitude,
     this.averageRating,
     this.reviewCount = 0,
+    this.monthlyPrice,
+    this.coachesCount = 0,
+    this.clientsCount = 0,
   });
 
   factory Academy.fromJson(Map<String, dynamic> json) {
@@ -64,6 +70,11 @@ class Academy {
           ? double.tryParse(json['average_rating'].toString())
           : null,
       reviewCount: json['review_count'] as int? ?? 0,
+      monthlyPrice: json['monthly_price'] != null
+          ? double.tryParse(json['monthly_price'].toString())
+          : null,
+      coachesCount: json['coaches_count'] as int? ?? 0,
+      clientsCount: json['clients_count'] as int? ?? 0,
     );
   }
 

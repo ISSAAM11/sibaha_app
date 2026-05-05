@@ -16,18 +16,22 @@ class MyAcademiesListWidget extends StatefulWidget {
 }
 
 class _MyAcademiesListWidgetState extends State<MyAcademiesListWidget> {
-  bool _fetchTriggered = false;
+  // Use BLoC state as the source of truth instead of a flag.
+  // This covers: initial load, return from other screens with a stale/expired state.
+  void _tryFetch() {
+    final tokenState = context.read<TokenBloc>().state;
+    if (tokenState is! TokenRetrieved) return;
+
+    final academyState = context.read<MyAcademyBloc>().state;
+    if (academyState is MyAcademyLoading || academyState is MyAcademyLoaded) return;
+
+    context.read<MyAcademyBloc>().add(FetchMyAcademies(tokenState.token));
+  }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (!_fetchTriggered) {
-      final tokenState = context.read<TokenBloc>().state;
-      if (tokenState is TokenRetrieved) {
-        context.read<MyAcademyBloc>().add(FetchMyAcademies(tokenState.token));
-        _fetchTriggered = true;
-      }
-    }
+    _tryFetch();
   }
 
   @override
@@ -35,7 +39,19 @@ class _MyAcademiesListWidgetState extends State<MyAcademiesListWidget> {
     return BlocListener<MyAcademyBloc, MyAcademyState>(
       listenWhen: (_, s) => s is MyAcademyTokenExpired,
       listener: (context, _) => context.read<TokenBloc>().add(TokenRefresh()),
-      child: const _MyAcademyList(),
+      child: BlocListener<TokenBloc, TokenState>(
+        // Re-fetch after every token refresh so the list recovers automatically.
+        listenWhen: (_, s) => s is TokenRetrieved,
+        listener: (context, state) {
+          if (state is TokenRetrieved) {
+            final academyState = context.read<MyAcademyBloc>().state;
+            if (academyState is! MyAcademyLoaded && academyState is! MyAcademyLoading) {
+              context.read<MyAcademyBloc>().add(FetchMyAcademies(state.token));
+            }
+          }
+        },
+        child: const _MyAcademyList(),
+      ),
     );
   }
 }

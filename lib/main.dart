@@ -5,6 +5,7 @@ import 'package:sibaha_app/data/repositories/academy_repository.dart';
 import 'package:sibaha_app/data/repositories/auth_repository.dart';
 import 'package:sibaha_app/data/repositories/coach_repository.dart';
 import 'package:sibaha_app/data/repositories/pool_repository.dart';
+import 'package:sibaha_app/data/repositories/subscription_repository.dart';
 import 'package:sibaha_app/data/repositories/user_repository.dart';
 import 'package:sibaha_app/presentation/blocs/academy_bloc/academy_bloc.dart';
 import 'package:sibaha_app/presentation/blocs/academy_details_bloc/academy_details_bloc.dart';
@@ -15,7 +16,11 @@ import 'package:sibaha_app/presentation/blocs/pool_bloc/pool_bloc.dart';
 import 'package:sibaha_app/presentation/blocs/pool_details_bloc/pool_details_bloc.dart';
 import 'package:sibaha_app/presentation/blocs/token_bloc/token_bloc.dart';
 import 'package:sibaha_app/presentation/blocs/invitation_bloc/invitation_bloc.dart';
+import 'package:sibaha_app/presentation/blocs/academy_clients_bloc/academy_clients_bloc.dart';
+import 'package:sibaha_app/presentation/blocs/coach_invitation_bloc/coach_invitation_bloc.dart';
+import 'package:sibaha_app/presentation/blocs/coach_schedule_bloc/coach_schedule_bloc.dart';
 import 'package:sibaha_app/presentation/blocs/review_bloc/review_bloc.dart';
+import 'package:sibaha_app/presentation/blocs/subscription_bloc/subscription_bloc.dart';
 import 'package:sibaha_app/presentation/blocs/user_details_bloc/user_details_bloc.dart';
 import 'package:sibaha_app/presentation/screens/initial_screen.dart';
 
@@ -85,6 +90,26 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (_) => InvitationBloc(
             academyRepository: getIt<AcademyRepository>(),
+            coachRepository: getIt<CoachRepository>(),
+          ),
+        ),
+        BlocProvider(
+          create: (_) => SubscriptionBloc(
+            subscriptionRepository: getIt<SubscriptionRepository>(),
+          ),
+        ),
+        BlocProvider(
+          create: (_) => AcademyClientsBloc(
+            subscriptionRepository: getIt<SubscriptionRepository>(),
+          ),
+        ),
+        BlocProvider(
+          create: (_) => CoachInvitationBloc(
+            coachRepository: getIt<CoachRepository>(),
+          ),
+        ),
+        BlocProvider(
+          create: (_) => CoachScheduleBloc(
             coachRepository: getIt<CoachRepository>(),
           ),
         ),

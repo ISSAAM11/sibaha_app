@@ -45,7 +45,10 @@ class AcademyCard extends StatelessWidget {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              _buildBackground(),
+              Hero(
+                tag: 'academy-image-${academy.id}',
+                child: _buildBackground(),
+              ),
               _buildGradient(),
               // Rating badge — top right
               Positioned(

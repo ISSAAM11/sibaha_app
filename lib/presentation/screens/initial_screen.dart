@@ -26,6 +26,8 @@ import 'package:sibaha_app/presentation/screens/forgot_password_otp_screen.dart'
 import 'package:sibaha_app/presentation/screens/login_screen.dart';
 import 'package:sibaha_app/presentation/screens/signup_screen.dart';
 import 'package:sibaha_app/presentation/screens/review_screen.dart';
+import 'package:sibaha_app/presentation/screens/academy_clients_screen.dart';
+import 'package:sibaha_app/presentation/screens/subscription_confirmation_screen.dart';
 import 'package:sibaha_app/presentation/screens/user/my_courses_screen.dart';
 import 'package:sibaha_app/presentation/screens/user/user_details_screen.dart';
 import 'package:sibaha_app/presentation/screens/user/user_information_screen.dart';
@@ -150,8 +152,11 @@ class _InitialScreenState extends State<InitialScreen> {
             path: '/MyAcademies/:id/dashboard',
             pageBuilder: (context, state) {
               final academy = state.extra as Academy;
-              return NoTransitionPage(
+              return CustomTransitionPage(
                 child: AcademyOwnerDashboardScreen(academy: academy),
+                transitionDuration: const Duration(milliseconds: 400),
+                reverseTransitionDuration: const Duration(milliseconds: 400),
+                transitionsBuilder: (_, __, ___, child) => child,
               );
             },
           ),
@@ -234,6 +239,27 @@ class _InitialScreenState extends State<InitialScreen> {
               return NoTransitionPage(
                   child:
                       TokenGate(child: UserInformationScreen(route: route)));
+            },
+          ),
+          GoRoute(
+            path: '/MyAcademies/:id/clients',
+            pageBuilder: (context, state) {
+              final extra = state.extra as Map<String, dynamic>;
+              return NoTransitionPage(
+                child: AcademyClientsScreen(
+                  academyId: extra['academyId'] as int,
+                  academyName: extra['academyName'] as String,
+                ),
+              );
+            },
+          ),
+          GoRoute(
+            path: '/subscription-confirmation',
+            pageBuilder: (context, state) {
+              final academy = state.extra as Academy;
+              return NoTransitionPage(
+                child: SubscriptionConfirmationScreen(academy: academy),
+              );
             },
           ),
         ],

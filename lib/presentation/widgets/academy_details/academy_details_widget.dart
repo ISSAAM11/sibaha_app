@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sibaha_app/data/models/user.dart';
 import 'package:sibaha_app/presentation/blocs/academy_details_bloc/academy_details_bloc.dart';
 import 'package:sibaha_app/presentation/blocs/token_bloc/token_bloc.dart';
+import 'package:sibaha_app/presentation/blocs/user_details_bloc/user_details_bloc.dart';
 import 'package:sibaha_app/presentation/widgets/academy_details/academy_map_section.dart';
 import 'package:sibaha_app/presentation/widgets/academy_details/day_schedule.dart';
 
@@ -352,23 +354,34 @@ class _AcademyDetailsWidgetState extends State<AcademyDetailsWidget> {
                             ),
                           ),
                         const SizedBox(height: 40),
-                        SizedBox(
-                          width: double.infinity,
-                          height: 50,
-                          child: ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25),
+                        BlocBuilder<UserDetailsBloc, UserDetailsState>(
+                          builder: (context, userState) {
+                            final isRegularUser = userState is UserDetailsLoaded &&
+                                userState.data.userType == UserType.user;
+                            if (!isRegularUser) return const SizedBox();
+                            return SizedBox(
+                              width: double.infinity,
+                              height: 50,
+                              child: ElevatedButton(
+                                onPressed: () => context.push(
+                                  '/subscription-confirmation',
+                                  extra: state.academyDetails,
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.blue,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(25),
+                                  ),
+                                  elevation: 2,
+                                ),
+                                child: const Text('Reserve now',
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600)),
                               ),
-                              elevation: 2,
-                            ),
-                            child: const Text('Reserve now',
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.w600)),
-                          ),
+                            );
+                          },
                         ),
                         const SizedBox(height: 20),
                       ],
