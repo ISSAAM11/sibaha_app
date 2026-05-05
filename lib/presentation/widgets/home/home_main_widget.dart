@@ -187,7 +187,7 @@ class _CitySearchSection extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.md),
           ElevatedButton.icon(
-            onPressed: () => scaffoldKey.currentState?.openDrawer(),
+            onPressed: () => context.go('/mapSearch'),
             icon: const Icon(
               Icons.location_on_outlined,
               size: 18,

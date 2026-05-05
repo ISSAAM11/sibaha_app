@@ -25,6 +25,7 @@ class MyAcademyBloc extends Bloc<MyAcademyEvent, MyAcademyState> {
     on<FetchMyAcademies>(_onFetchMyAcademies);
     on<CreateAcademy>(_onCreateAcademy);
     on<UpdateAcademy>(_onUpdateAcademy);
+    on<DeleteAcademy>(_onDeleteAcademy);
     on<CreatePool>(_onCreatePool);
     on<UpdatePool>(_onUpdatePool);
     on<DeletePool>(_onDeletePool);
@@ -130,6 +131,24 @@ class MyAcademyBloc extends Bloc<MyAcademyEvent, MyAcademyState> {
       emit(MyAcademyTokenExpired());
     } catch (e) {
       emit(PoolDeleteFailed(e.toString()));
+    }
+  }
+
+  Future<void> _onDeleteAcademy(
+      DeleteAcademy event, Emitter<MyAcademyState> emit) async {
+    emit(AcademyDeleting());
+    try {
+      await _academyRepository.deleteAcademy(
+        token: event.token,
+        academyId: event.academyId,
+      );
+      _academies = _academies.where((a) => a.id != event.academyId).toList();
+      emit(AcademyDeleted(event.academyId));
+      emit(MyAcademyLoaded(_academies));
+    } on TokenExpiredException {
+      emit(MyAcademyTokenExpired());
+    } catch (e) {
+      emit(AcademyDeleteFailed(e.toString()));
     }
   }
 

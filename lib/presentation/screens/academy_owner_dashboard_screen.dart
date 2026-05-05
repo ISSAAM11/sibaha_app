@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sibaha_app/core/theme/app_border_radius.dart';
 import 'package:sibaha_app/core/theme/app_colors.dart';
 import 'package:sibaha_app/core/theme/app_spacing.dart';
 import 'package:sibaha_app/core/theme/app_text_styles.dart';
 import 'package:sibaha_app/data/models/academy.dart';
+import 'package:sibaha_app/presentation/blocs/my_academy_bloc/my_academy_bloc.dart';
+import 'package:sibaha_app/presentation/blocs/token_bloc/token_bloc.dart';
 
 class AcademyOwnerDashboardScreen extends StatelessWidget {
   final Academy academy;
@@ -14,11 +17,70 @@ class AcademyOwnerDashboardScreen extends StatelessWidget {
     required this.academy,
   });
 
+  void _confirmDelete(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Delete Academy'),
+        content: Text(
+          'Are you sure you want to permanently delete "${academy.name}"? '
+          'This cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+              final tokenState = context.read<TokenBloc>().state;
+              if (tokenState is! TokenRetrieved) return;
+              context.read<MyAcademyBloc>().add(DeleteAcademy(
+                    token: tokenState.token,
+                    academyId: academy.id,
+                  ));
+            },
+            child: Text(
+              'Delete',
+              style: TextStyle(color: AppColors.errorColor),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.surfaceContainerLow,
-      body: CustomScrollView(
+    return BlocListener<MyAcademyBloc, MyAcademyState>(
+      listenWhen: (_, s) =>
+          s is AcademyDeleted ||
+          s is AcademyDeleting ||
+          s is AcademyDeleteFailed,
+      listener: (context, state) {
+        if (state is AcademyDeleted) {
+          context.go('/MyAcademies');
+        } else if (state is AcademyDeleteFailed) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: AppColors.errorColor,
+            ),
+          );
+        }
+      },
+      child: BlocBuilder<MyAcademyBloc, MyAcademyState>(
+        buildWhen: (_, s) => s is AcademyDeleting,
+        builder: (context, state) {
+          final isDeleting = state is AcademyDeleting;
+          return Scaffold(
+            backgroundColor: AppColors.surfaceContainerLow,
+            body: AbsorbPointer(
+              absorbing: isDeleting,
+              child: Stack(
+                children: [
+                  CustomScrollView(
         slivers: [
           _HeroHeader(academy: academy),
           SliverToBoxAdapter(
@@ -100,10 +162,28 @@ class AcademyOwnerDashboardScreen extends StatelessWidget {
                     extra: {'academy': academy},
                   ),
                 ),
+                const SizedBox(height: AppSpacing.xxl),
+                _DeleteSection(onTap: () => _confirmDelete(context)),
               ]),
             ),
           ),
         ],
+      ),
+                  if (isDeleting)
+                    const Positioned.fill(
+                      child: ColoredBox(
+                        color: Colors.black26,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                              color: AppColors.primary),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -406,6 +486,68 @@ class _DashboardSection extends StatelessWidget {
               Icon(
                 Icons.chevron_right,
                 color: AppColors.outlineVariant,
+                size: 20,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DeleteSection extends StatelessWidget {
+  final VoidCallback? onTap;
+
+  const _DeleteSection({this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppColors.errorContainer,
+      borderRadius: AppBorderRadius.lgRadius,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: AppBorderRadius.lgRadius,
+        child: Container(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          child: Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: AppColors.errorColor.withOpacity(0.12),
+                  borderRadius: AppBorderRadius.mdRadius,
+                ),
+                child: const Icon(Icons.delete_outline,
+                    color: AppColors.errorColor, size: 24),
+              ),
+              const SizedBox(width: AppSpacing.lg),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Delete Academy',
+                      style: AppTextStyles.subtitle.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.errorColor,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.xs),
+                    Text(
+                      'Permanently remove this academy and all its data',
+                      style: AppTextStyles.caption.copyWith(
+                        color: AppColors.errorColor.withOpacity(0.7),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                Icons.chevron_right,
+                color: AppColors.errorColor.withOpacity(0.5),
                 size: 20,
               ),
             ],

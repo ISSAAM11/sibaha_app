@@ -108,6 +108,25 @@ class PoolCreateFailed extends MyAcademyState {
   List<Object?> get props => [message];
 }
 
+class AcademyDeleting extends MyAcademyState {
+  @override
+  List<Object?> get props => [];
+}
+
+class AcademyDeleted extends MyAcademyState {
+  final int academyId;
+  AcademyDeleted(this.academyId);
+  @override
+  List<Object?> get props => [academyId];
+}
+
+class AcademyDeleteFailed extends MyAcademyState {
+  final String message;
+  AcademyDeleteFailed(this.message);
+  @override
+  List<Object?> get props => [message];
+}
+
 class AcademyUpdating extends MyAcademyState {
   @override
   List<Object?> get props => [];

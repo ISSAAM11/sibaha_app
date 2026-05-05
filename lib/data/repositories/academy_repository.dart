@@ -56,6 +56,12 @@ class AcademyRepository {
           String token, int academyId, int rating, String comment) =>
       _service.createReview(token, academyId, rating, comment);
 
+  Future<void> deleteAcademy({
+    required String token,
+    required int academyId,
+  }) =>
+      _service.deleteAcademy(token: token, academyId: academyId);
+
   Future<Academy> updateAcademy({
     required String token,
     required int academyId,

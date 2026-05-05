@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:sibaha_app/core/theme/app_border_radius.dart';
 import 'package:sibaha_app/core/theme/app_colors.dart';
 import 'package:sibaha_app/core/theme/app_spacing.dart';
@@ -37,8 +38,7 @@ class _CreateAcademyScreenState extends State<CreateAcademyScreen> {
   final _cityController = TextEditingController();
   final _addressController = TextEditingController();
   final _descriptionController = TextEditingController();
-  final _latController = TextEditingController();
-  final _lonController = TextEditingController();
+  LatLng? _pickedLocation;
   Set<String> _selectedSpecialities = {};
   XFile? _pickedImage;
   Uint8List? _imageBytes;
@@ -58,8 +58,9 @@ class _CreateAcademyScreenState extends State<CreateAcademyScreen> {
       _addressController.text = academy.address;
       _descriptionController.text = academy.description;
       _selectedSpecialities = Set.from(academy.specialities);
-      if (academy.latitude != null) _latController.text = academy.latitude.toString();
-      if (academy.longitude != null) _lonController.text = academy.longitude.toString();
+      if (academy.latitude != null && academy.longitude != null) {
+        _pickedLocation = LatLng(academy.latitude!, academy.longitude!);
+      }
       _pools = List.from(academy.poolList);
     }
   }
@@ -70,8 +71,6 @@ class _CreateAcademyScreenState extends State<CreateAcademyScreen> {
     _cityController.dispose();
     _addressController.dispose();
     _descriptionController.dispose();
-    _latController.dispose();
-    _lonController.dispose();
     super.dispose();
   }
 
@@ -84,6 +83,16 @@ class _CreateAcademyScreenState extends State<CreateAcademyScreen> {
         _pickedImage = image;
         _imageBytes = bytes;
       });
+    }
+  }
+
+  Future<void> _openLocationPicker() async {
+    final result = await context.push<LatLng>(
+      '/locationPicker',
+      extra: _pickedLocation,
+    );
+    if (result != null && mounted) {
+      setState(() => _pickedLocation = result);
     }
   }
 
@@ -153,8 +162,8 @@ class _CreateAcademyScreenState extends State<CreateAcademyScreen> {
             specialities: _selectedSpecialities.toList(),
             pictureBytes: _imageBytes,
             pictureFilename: _pickedImage?.name,
-            latitude: double.tryParse(_latController.text),
-            longitude: double.tryParse(_lonController.text),
+            latitude: _pickedLocation?.latitude,
+            longitude: _pickedLocation?.longitude,
           ));
     } else {
       context.read<MyAcademyBloc>().add(CreateAcademy(
@@ -166,8 +175,8 @@ class _CreateAcademyScreenState extends State<CreateAcademyScreen> {
             specialities: _selectedSpecialities.toList(),
             pictureBytes: _imageBytes!,
             pictureFilename: _pickedImage!.name,
-            latitude: double.tryParse(_latController.text),
-            longitude: double.tryParse(_lonController.text),
+            latitude: _pickedLocation?.latitude,
+            longitude: _pickedLocation?.longitude,
           ));
     }
   }
@@ -343,28 +352,54 @@ class _CreateAcademyScreenState extends State<CreateAcademyScreen> {
                   const SizedBox(height: AppSpacing.lg),
                   _FieldLabel('Location (optional)'),
                   const SizedBox(height: AppSpacing.sm),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _InputField(
-                          controller: _latController,
-                          hint: 'Latitude',
-                          keyboardType: const TextInputType.numberWithOptions(
-                              decimal: true, signed: true),
-                          enabled: !isLoading,
+                  GestureDetector(
+                    onTap: isLoading ? null : _openLocationPicker,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.lg,
+                        vertical: AppSpacing.md,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(AppBorderRadius.md),
+                        border: Border.all(
+                          color: _pickedLocation != null
+                              ? AppColors.primary
+                              : AppColors.outlineVariant,
+                          width: _pickedLocation != null ? 1.5 : 1,
                         ),
                       ),
-                      const SizedBox(width: AppSpacing.md),
-                      Expanded(
-                        child: _InputField(
-                          controller: _lonController,
-                          hint: 'Longitude',
-                          keyboardType: const TextInputType.numberWithOptions(
-                              decimal: true, signed: true),
-                          enabled: !isLoading,
-                        ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.map_outlined,
+                            size: 20,
+                            color: _pickedLocation != null
+                                ? AppColors.primary
+                                : AppColors.outline,
+                          ),
+                          const SizedBox(width: AppSpacing.md),
+                          Expanded(
+                            child: Text(
+                              _pickedLocation != null
+                                  ? 'Lat: ${_pickedLocation!.latitude.toStringAsFixed(5)}'
+                                    '   Lng: ${_pickedLocation!.longitude.toStringAsFixed(5)}'
+                                  : 'Select on map',
+                              style: AppTextStyles.fieldInput.copyWith(
+                                color: _pickedLocation != null
+                                    ? AppColors.onSurface
+                                    : AppColors.outline.withOpacity(0.7),
+                              ),
+                            ),
+                          ),
+                          const Icon(
+                            Icons.chevron_right,
+                            size: 20,
+                            color: AppColors.outline,
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                   if (_isEditMode) ...[
                     const SizedBox(height: AppSpacing.lg),

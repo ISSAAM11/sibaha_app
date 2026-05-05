@@ -35,6 +35,9 @@ import 'package:sibaha_app/presentation/screens/subscription_confirmation_screen
 import 'package:sibaha_app/presentation/screens/user/my_courses_screen.dart';
 import 'package:sibaha_app/presentation/screens/user/user_details_screen.dart';
 import 'package:sibaha_app/presentation/screens/user/user_information_screen.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:sibaha_app/presentation/screens/location_picker_screen.dart';
+import 'package:sibaha_app/presentation/screens/map_search_screen.dart';
 import 'package:sibaha_app/presentation/widgets/shell_scaffold.dart';
 import 'package:sibaha_app/presentation/widgets/token_gate.dart';
 
@@ -88,6 +91,21 @@ class _InitialScreenState extends State<InitialScreen> {
               email: data['email'] ?? '',
               code: data['code'] ?? '',
             ),
+          );
+        },
+      ),
+
+      GoRoute(
+        path: '/mapSearch',
+        pageBuilder: (context, state) =>
+            const NoTransitionPage(child: MapSearchScreen()),
+      ),
+      GoRoute(
+        path: '/locationPicker',
+        pageBuilder: (context, state) {
+          final initial = state.extra as LatLng?;
+          return NoTransitionPage(
+            child: LocationPickerScreen(initialLocation: initial),
           );
         },
       ),

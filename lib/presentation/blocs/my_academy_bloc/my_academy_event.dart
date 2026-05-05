@@ -96,6 +96,13 @@ class CreatePool extends MyAcademyEvent {
   });
 }
 
+class DeleteAcademy extends MyAcademyEvent {
+  final String token;
+  final int academyId;
+
+  DeleteAcademy({required this.token, required this.academyId});
+}
+
 class UpdateAcademy extends MyAcademyEvent {
   final String token;
   final int academyId;

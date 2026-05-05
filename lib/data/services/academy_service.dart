@@ -85,8 +85,8 @@ class AcademyService {
         'specialities': jsonEncode(specialities),
         'picture': MultipartFile.fromBytes(pictureBytes, filename: pictureFilename),
       };
-      if (latitude != null) fields['latitude'] = latitude.toString();
-      if (longitude != null) fields['longitude'] = longitude.toString();
+      if (latitude != null) fields['latitude'] = latitude.toStringAsFixed(6);
+      if (longitude != null) fields['longitude'] = longitude.toStringAsFixed(6);
 
       final response = await _dio.postUri(
         url,
@@ -227,6 +227,24 @@ class AcademyService {
     }
   }
 
+  Future<void> deleteAcademy({
+    required String token,
+    required int academyId,
+  }) async {
+    final url = Uri.parse("$httpServerPath/api/my-academies/$academyId/");
+    try {
+      await _dio.deleteUri(
+        url,
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+    } on DioException catch (e) {
+      handleDioException(e);
+    } catch (e) {
+      if (e is AppException) rethrow;
+      throw ServerException(null, 'Unexpected error occurred: ${e.toString()}');
+    }
+  }
+
   Future<Academy> updateAcademy({
     required String token,
     required int academyId,
@@ -252,8 +270,8 @@ class AcademyService {
       if (pictureBytes != null && pictureFilename != null) {
         fields['picture'] = MultipartFile.fromBytes(pictureBytes, filename: pictureFilename);
       }
-      if (latitude != null) fields['latitude'] = latitude.toString();
-      if (longitude != null) fields['longitude'] = longitude.toString();
+      if (latitude != null) fields['latitude'] = latitude.toStringAsFixed(6);
+      if (longitude != null) fields['longitude'] = longitude.toStringAsFixed(6);
 
       final response = await _dio.patchUri(
         url,
