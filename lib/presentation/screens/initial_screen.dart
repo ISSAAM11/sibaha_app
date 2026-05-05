@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sibaha_app/core/theme/app_theme.dart';
 import 'package:sibaha_app/data/models/academy.dart';
+import 'package:sibaha_app/data/models/course.dart';
 import 'package:sibaha_app/presentation/blocs/auth_bloc/auth_bloc.dart';
 import 'package:sibaha_app/presentation/blocs/token_bloc/token_bloc.dart';
 import 'package:sibaha_app/presentation/screens/academy_coaches_screen.dart';
@@ -27,6 +28,9 @@ import 'package:sibaha_app/presentation/screens/login_screen.dart';
 import 'package:sibaha_app/presentation/screens/signup_screen.dart';
 import 'package:sibaha_app/presentation/screens/review_screen.dart';
 import 'package:sibaha_app/presentation/screens/academy_clients_screen.dart';
+import 'package:sibaha_app/presentation/screens/academy_courses_screen.dart';
+import 'package:sibaha_app/presentation/screens/course_enrollment_screen.dart';
+import 'package:sibaha_app/presentation/screens/course_form_screen.dart';
 import 'package:sibaha_app/presentation/screens/subscription_confirmation_screen.dart';
 import 'package:sibaha_app/presentation/screens/user/my_courses_screen.dart';
 import 'package:sibaha_app/presentation/screens/user/user_details_screen.dart';
@@ -259,6 +263,47 @@ class _InitialScreenState extends State<InitialScreen> {
               final academy = state.extra as Academy;
               return NoTransitionPage(
                 child: SubscriptionConfirmationScreen(academy: academy),
+              );
+            },
+          ),
+          GoRoute(
+            path: '/MyAcademies/:id/courses',
+            pageBuilder: (context, state) {
+              final extra = state.extra as Map<String, dynamic>;
+              return NoTransitionPage(
+                child: AcademyCoursesScreen(
+                  academy: extra['academy'] as Academy,
+                ),
+              );
+            },
+          ),
+          GoRoute(
+            path: '/MyAcademies/:id/courses/new',
+            pageBuilder: (context, state) {
+              final academy = state.extra as Academy;
+              return NoTransitionPage(
+                child: CourseFormScreen(academy: academy),
+              );
+            },
+          ),
+          GoRoute(
+            path: '/MyAcademies/:id/courses/edit',
+            pageBuilder: (context, state) {
+              final extra = state.extra as Map<String, dynamic>;
+              return NoTransitionPage(
+                child: CourseFormScreen(
+                  academy: extra['academy'] as Academy,
+                  course: extra['course'] as Course,
+                ),
+              );
+            },
+          ),
+          GoRoute(
+            path: '/course-enrollment',
+            pageBuilder: (context, state) {
+              final course = state.extra as Course;
+              return NoTransitionPage(
+                child: CourseEnrollmentScreen(course: course),
               );
             },
           ),

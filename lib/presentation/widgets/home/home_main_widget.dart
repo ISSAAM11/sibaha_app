@@ -5,6 +5,8 @@ import 'package:sibaha_app/core/theme/app_border_radius.dart';
 import 'package:sibaha_app/core/theme/app_colors.dart';
 import 'package:sibaha_app/core/theme/app_spacing.dart';
 import 'package:sibaha_app/core/theme/app_text_styles.dart';
+import 'package:sibaha_app/data/models/academy.dart';
+import 'package:sibaha_app/presentation/blocs/academy_bloc/academy_bloc.dart';
 import 'package:sibaha_app/presentation/blocs/token_bloc/token_bloc.dart';
 import 'package:sibaha_app/presentation/widgets/home/search_button.dart';
 
@@ -213,165 +215,217 @@ class _CitySearchSection extends StatelessWidget {
   }
 }
 
-class _PopularAcademiesSection extends StatelessWidget {
+class _PopularAcademiesSection extends StatefulWidget {
   const _PopularAcademiesSection();
 
   @override
+  State<_PopularAcademiesSection> createState() =>
+      _PopularAcademiesSectionState();
+}
+
+class _PopularAcademiesSectionState extends State<_PopularAcademiesSection> {
+  bool _fetchedOnce = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_fetchedOnce) {
+      _fetchedOnce = true;
+      if (context.read<AcademyBloc>().state is AcademyInitial) {
+        final tokenState = context.read<TokenBloc>().state;
+        final token = tokenState is TokenRetrieved ? tokenState.token : null;
+        context.read<AcademyBloc>().add(FetchAcademies(token));
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-          child: Text(
-            'Popular Academies',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: AppColors.onSurface,
-                ),
-          ),
-        ),
-        const SizedBox(height: AppSpacing.md),
-        SizedBox(
-          height: 170,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-            itemCount: 5,
-            separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.md),
-            itemBuilder: (context, index) {
-              final isEven = index % 2 == 0;
-              return _AcademyCard(
-                imageUrl: isEven
-                    ? 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop'
-                    : 'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=400&h=300&fit=crop',
-                title: isEven ? 'Academy Sports' : 'Pool Academy',
-                subtitle: 'Swimming • Fitness',
-                rating: '4.5',
-              );
-            },
-          ),
-        ),
-      ],
+    return BlocBuilder<AcademyBloc, AcademyState>(
+      builder: (context, state) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+              child: Text(
+                'Popular Academies',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      color: AppColors.onSurface,
+                    ),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            SizedBox(
+              height: 170,
+              child: _buildList(state),
+            ),
+          ],
+        );
+      },
     );
+  }
+
+  Widget _buildList(AcademyState state) {
+    if (state is AcademyLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (state is AcademyLoaded) {
+      if (state.academies.isEmpty) {
+        return Center(
+          child: Text('No academies found', style: AppTextStyles.subtitle),
+        );
+      }
+      return ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+        itemCount: state.academies.length,
+        separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.md),
+        itemBuilder: (context, index) =>
+            _AcademyCard(academy: state.academies[index]),
+      );
+    }
+    if (state is AcademyFailed) {
+      return Center(
+        child: Text(state.message, style: AppTextStyles.subtitle),
+      );
+    }
+    return const SizedBox.shrink();
   }
 }
 
 class _AcademyCard extends StatelessWidget {
-  final String imageUrl;
-  final String title;
-  final String subtitle;
-  final String rating;
+  final Academy academy;
 
-  const _AcademyCard({
-    required this.imageUrl,
-    required this.title,
-    required this.subtitle,
-    required this.rating,
-  });
+  const _AcademyCard({required this.academy});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 220,
-      decoration: BoxDecoration(
-        borderRadius: AppBorderRadius.lgRadius,
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.onSurface.withOpacity(0.12),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: AppBorderRadius.lgRadius,
-        child: Stack(
-          children: [
-            Positioned.fill(
-              child: Image.network(
-                imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
-                  color: AppColors.surfaceContainerLow,
-                ),
-              ),
+    final subtitle = academy.specialities.isNotEmpty
+        ? academy.specialities.take(3).join(' • ')
+        : academy.city;
+
+    return GestureDetector(
+      onTap: () => context.push('/AcademyDetails/${academy.id}'),
+      child: Container(
+        width: 220,
+        decoration: BoxDecoration(
+          borderRadius: AppBorderRadius.lgRadius,
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.onSurface.withOpacity(0.12),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
             ),
-            Positioned.fill(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      AppColors.onSurface.withOpacity(0.75),
-                    ],
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: AppBorderRadius.lgRadius,
+          child: Stack(
+            children: [
+              Positioned.fill(child: _buildBackground()),
+              Positioned.fill(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        AppColors.onSurface.withOpacity(0.75),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            Positioned(
-              top: AppSpacing.md,
-              right: AppSpacing.md,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.sm,
-                  vertical: AppSpacing.xs,
+              if (academy.averageRating != null)
+                Positioned(
+                  top: AppSpacing.md,
+                  right: AppSpacing.md,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.sm,
+                      vertical: AppSpacing.xs,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.onSurface.withOpacity(0.55),
+                      borderRadius: BorderRadius.circular(AppBorderRadius.md),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.star,
+                            color: AppColors.secondaryFixedDim, size: 14),
+                        const SizedBox(width: AppSpacing.xs),
+                        Text(
+                          academy.averageRating!.toStringAsFixed(1),
+                          style: const TextStyle(
+                            fontFamily: 'Lexend',
+                            color: AppColors.onPrimary,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-                decoration: BoxDecoration(
-                  color: AppColors.onSurface.withOpacity(0.55),
-                  borderRadius: BorderRadius.circular(AppBorderRadius.md),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
+              Positioned(
+                left: AppSpacing.md,
+                right: AppSpacing.md,
+                bottom: AppSpacing.md,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(Icons.star,
-                        color: AppColors.secondaryFixedDim, size: 14),
-                    const SizedBox(width: AppSpacing.xs),
                     Text(
-                      rating,
+                      academy.name,
                       style: const TextStyle(
                         fontFamily: 'Lexend',
                         color: AppColors.onPrimary,
-                        fontSize: 12,
+                        fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: AppSpacing.xs),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontFamily: 'Lexend',
+                        color: AppColors.onPrimary.withOpacity(0.85),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
               ),
-            ),
-            Positioned(
-              left: AppSpacing.md,
-              right: AppSpacing.md,
-              bottom: AppSpacing.md,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontFamily: 'Lexend',
-                      color: AppColors.onPrimary,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.xs),
-                  Text(
-                    subtitle,
-                    style: TextStyle(
-                      fontFamily: 'Lexend',
-                      color: AppColors.onPrimary.withOpacity(0.85),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildBackground() {
+    if (academy.image != null && academy.image!.isNotEmpty) {
+      return Image.network(
+        academy.image!,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => _placeholder(),
+      );
+    }
+    return _placeholder();
+  }
+
+  Widget _placeholder() {
+    return Container(
+      color: AppColors.surfaceContainerLow,
+      child: const Center(
+        child: Icon(Icons.pool, size: 40, color: AppColors.outlineVariant),
       ),
     );
   }

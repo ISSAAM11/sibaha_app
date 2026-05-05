@@ -227,8 +227,8 @@ class _PoolDetailsWidgetState extends State<PoolDetailsWidget> {
                                       avatar: const Icon(Icons.straighten,
                                           size: 16),
                                       backgroundColor: Colors.blue[50],
-                                      side: BorderSide(
-                                          color: Colors.blue[200]!),
+                                      side:
+                                          BorderSide(color: Colors.blue[200]!),
                                     ))
                                 .toList(),
                           ),
@@ -251,33 +251,33 @@ class _PoolDetailsWidgetState extends State<PoolDetailsWidget> {
                                 .map((s) => Chip(
                                       label: Text(s),
                                       backgroundColor: Colors.grey[100],
-                                      side: BorderSide(
-                                          color: Colors.grey[300]!),
+                                      side:
+                                          BorderSide(color: Colors.grey[300]!),
                                     ))
                                 .toList(),
                           ),
                         ],
-                        const SizedBox(height: 40),
-                        SizedBox(
-                          width: double.infinity,
-                          height: 50,
-                          child: ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              elevation: 2,
-                            ),
-                            child: const Text(
-                              'Reserve now',
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.w600),
-                            ),
-                          ),
-                        ),
+                        // const SizedBox(height: 40),
+                        // SizedBox(
+                        //   width: double.infinity,
+                        //   height: 50,
+                        //   child: ElevatedButton(
+                        //     onPressed: () {},
+                        //     style: ElevatedButton.styleFrom(
+                        //       backgroundColor: Colors.blue,
+                        //       foregroundColor: Colors.white,
+                        //       shape: RoundedRectangleBorder(
+                        //         borderRadius: BorderRadius.circular(25),
+                        //       ),
+                        //       elevation: 2,
+                        //     ),
+                        //     child: const Text(
+                        //       'Reserve now',
+                        //       style: TextStyle(
+                        //           fontSize: 18, fontWeight: FontWeight.w600),
+                        //     ),
+                        //   ),
+                        // ),
                         const SizedBox(height: 20),
                       ],
                     ),

@@ -76,6 +76,65 @@ class SubscriptionService {
     }
   }
 
+  Future<List<Subscription>> fetchMyEnrollments(String token) async {
+    final url = Uri.parse('$httpServerPath/api/my-enrollments/');
+    try {
+      final response = await _dio.getUri(
+        url,
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+      handleNoDataReceivedException(response);
+      try {
+        return (response.data['data'] as List)
+            .map((e) => Subscription.fromJson(e as Map<String, dynamic>))
+            .toList();
+      } catch (parseError) {
+        throw ServerException(response.statusCode, 'Failed to parse enrollments: $parseError');
+      }
+    } on DioException catch (e) {
+      handleDioException(e);
+    } catch (e) {
+      if (e is AppException) rethrow;
+      throw ServerException(null, 'Unexpected error: ${e.toString()}');
+    }
+  }
+
+  Future<Subscription> enrollInCourse(String token, int courseId) async {
+    final url = Uri.parse('$httpServerPath/api/courses/$courseId/enroll/');
+    try {
+      final response = await _dio.postUri(
+        url,
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+      handleNoDataReceivedException(response);
+      try {
+        return Subscription.fromJson(response.data['data'] as Map<String, dynamic>);
+      } catch (parseError) {
+        throw ServerException(response.statusCode, 'Failed to parse Subscription: $parseError');
+      }
+    } on DioException catch (e) {
+      handleDioException(e);
+    } catch (e) {
+      if (e is AppException) rethrow;
+      throw ServerException(null, 'Unexpected error: ${e.toString()}');
+    }
+  }
+
+  Future<void> deleteEnrollment(String token, int enrollmentId) async {
+    final url = Uri.parse('$httpServerPath/api/my-enrollments/$enrollmentId/');
+    try {
+      await _dio.deleteUri(
+        url,
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+    } on DioException catch (e) {
+      handleDioException(e);
+    } catch (e) {
+      if (e is AppException) rethrow;
+      throw ServerException(null, 'Unexpected error: ${e.toString()}');
+    }
+  }
+
   Future<void> removeClient(String token, int academyId, int subscriptionId) async {
     final url = Uri.parse('$httpServerPath/api/my-academies/$academyId/clients/$subscriptionId/');
     try {

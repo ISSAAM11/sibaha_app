@@ -24,7 +24,8 @@ class SubscriptionConfirmationScreen extends StatelessWidget {
               content: const Text('Subscription confirmed!'),
               backgroundColor: AppColors.primary,
               behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(borderRadius: AppBorderRadius.mdRadius),
+              shape: RoundedRectangleBorder(
+                  borderRadius: AppBorderRadius.mdRadius),
             ),
           );
           context.pop();
@@ -34,7 +35,8 @@ class SubscriptionConfirmationScreen extends StatelessWidget {
               content: Text(state.message),
               backgroundColor: AppColors.errorColor,
               behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(borderRadius: AppBorderRadius.mdRadius),
+              shape: RoundedRectangleBorder(
+                  borderRadius: AppBorderRadius.mdRadius),
             ),
           );
         } else if (state is SubscriptionTokenExpired) {
@@ -50,7 +52,8 @@ class SubscriptionConfirmationScreen extends StatelessWidget {
             icon: const Icon(Icons.arrow_back, color: AppColors.onSurface),
             onPressed: () => context.pop(),
           ),
-          title: const Text('Confirm Subscription', style: AppTextStyles.fieldLabel),
+          title: const Text('Confirm Subscription',
+              style: AppTextStyles.fieldLabel),
         ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(AppSpacing.xl),
@@ -64,17 +67,22 @@ class SubscriptionConfirmationScreen extends StatelessWidget {
                   width: double.infinity,
                   color: Colors.blueGrey[200],
                   child: academy.image != null && academy.image!.isNotEmpty
-                      ? Image.network(academy.image!, fit: BoxFit.cover,
+                      ? Image.network(academy.image!,
+                          fit: BoxFit.cover,
                           errorBuilder: (_, __, ___) => const Center(
-                              child: Icon(Icons.pool, size: 48, color: Colors.white54)))
+                              child: Icon(Icons.pool,
+                                  size: 48, color: Colors.white54)))
                       : const Center(
-                          child: Icon(Icons.pool, size: 48, color: Colors.white54)),
+                          child: Icon(Icons.pool,
+                              size: 48, color: Colors.white54)),
                 ),
               ),
               const SizedBox(height: AppSpacing.xl),
               Text(academy.name,
                   style: const TextStyle(
-                      fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.onSurface)),
+                      fontSize: 22,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.onSurface)),
               if (academy.city.isNotEmpty) ...[
                 const SizedBox(height: AppSpacing.xs),
                 Text(academy.city, style: AppTextStyles.subtitle),
@@ -98,7 +106,7 @@ class SubscriptionConfirmationScreen extends StatelessWidget {
                       valueColor: AppColors.primary,
                     ),
                     const SizedBox(height: AppSpacing.md),
-                    _SummaryRow(label: 'Payment', value: 'On-site (no charge now)'),
+                    _SummaryRow(label: 'Payment', value: 'On-site'),
                   ],
                 ),
               ),
@@ -165,7 +173,8 @@ class _SummaryRow extends StatelessWidget {
   final String value;
   final Color? valueColor;
 
-  const _SummaryRow({required this.label, required this.value, this.valueColor});
+  const _SummaryRow(
+      {required this.label, required this.value, this.valueColor});
 
   @override
   Widget build(BuildContext context) {

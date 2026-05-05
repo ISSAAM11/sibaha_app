@@ -8,6 +8,7 @@ import 'package:sibaha_app/data/models/coach_filter.dart';
 import 'package:sibaha_app/presentation/blocs/coach_bloc/coach_bloc.dart';
 import 'package:sibaha_app/presentation/widgets/coaches/coach_filter_sheet.dart';
 import 'package:sibaha_app/presentation/widgets/coaches/coaches_list_widget.dart';
+import 'package:go_router/go_router.dart';
 
 class CoachesScreen extends StatefulWidget {
   const CoachesScreen({super.key});
@@ -41,11 +42,7 @@ class _CoachesScreenState extends State<CoachesScreen> {
     final bloc = context.read<CoachBloc>();
     final all = bloc.allCoaches;
 
-    final languages = all
-        .expand((c) => c.languages)
-        .toSet()
-        .toList()
-      ..sort();
+    final languages = all.expand((c) => c.languages).toSet().toList()..sort();
 
     final specialities = all
         .expand((c) => c.speciality
@@ -126,6 +123,18 @@ class _Header extends StatelessWidget {
         children: [
           Row(
             children: [
+              GestureDetector(
+                onTap: () => context.go('/home'),
+                child: Container(
+                  margin: const EdgeInsets.all(AppSpacing.sm),
+                  decoration: BoxDecoration(
+                    color: AppColors.surfaceContainerLow,
+                    borderRadius: AppBorderRadius.smRadius,
+                  ),
+                  child: const Icon(Icons.arrow_back,
+                      color: AppColors.onSurface, size: 20),
+                ),
+              ),
               Expanded(
                 child: TextField(
                   controller: searchController,

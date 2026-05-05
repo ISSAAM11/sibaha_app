@@ -3,12 +3,14 @@ import 'package:get_it/get_it.dart';
 import 'package:sibaha_app/data/repositories/academy_repository.dart';
 import 'package:sibaha_app/data/repositories/auth_repository.dart';
 import 'package:sibaha_app/data/repositories/coach_repository.dart';
+import 'package:sibaha_app/data/repositories/course_repository.dart';
 import 'package:sibaha_app/data/repositories/pool_repository.dart';
 import 'package:sibaha_app/data/repositories/subscription_repository.dart';
 import 'package:sibaha_app/data/repositories/user_repository.dart';
 import 'package:sibaha_app/data/services/academy_service.dart';
 import 'package:sibaha_app/data/services/auth_service.dart';
 import 'package:sibaha_app/data/services/coach_service.dart';
+import 'package:sibaha_app/data/services/course_service.dart';
 import 'package:sibaha_app/data/services/pool_service.dart';
 import 'package:sibaha_app/data/services/subscription_service.dart';
 import 'package:sibaha_app/data/services/user_service.dart';
@@ -24,6 +26,7 @@ void setupLocator() {
   getIt.registerLazySingleton<UserService>(() => UserService(getIt<Dio>()));
   getIt.registerLazySingleton<CoachService>(() => CoachService(getIt<Dio>()));
   getIt.registerLazySingleton<SubscriptionService>(() => SubscriptionService(getIt<Dio>()));
+  getIt.registerLazySingleton<CourseService>(() => CourseService(getIt<Dio>()));
 
   getIt.registerLazySingleton<AuthRepository>(() => AuthRepository(getIt<AuthService>()));
   getIt.registerLazySingleton<AcademyRepository>(() => AcademyRepository(getIt<AcademyService>()));
@@ -31,4 +34,5 @@ void setupLocator() {
   getIt.registerLazySingleton<UserRepository>(() => UserRepository(getIt<UserService>()));
   getIt.registerLazySingleton<CoachRepository>(() => CoachRepository(getIt<CoachService>()));
   getIt.registerLazySingleton<SubscriptionRepository>(() => SubscriptionRepository(getIt<SubscriptionService>()));
+  getIt.registerLazySingleton<CourseRepository>(() => CourseRepository(getIt<CourseService>()));
 }

@@ -1,3 +1,4 @@
+import 'package:sibaha_app/data/models/course.dart';
 import 'package:sibaha_app/data/models/pool_summary_dto.dart';
 
 class Academy {
@@ -19,6 +20,7 @@ class Academy {
   final double? monthlyPrice;
   final int coachesCount;
   final int clientsCount;
+  final List<Course> courses;
 
   Academy({
     required this.id,
@@ -39,6 +41,7 @@ class Academy {
     this.monthlyPrice,
     this.coachesCount = 0,
     this.clientsCount = 0,
+    this.courses = const [],
   });
 
   factory Academy.fromJson(Map<String, dynamic> json) {
@@ -75,6 +78,9 @@ class Academy {
           : null,
       coachesCount: json['coaches_count'] as int? ?? 0,
       clientsCount: json['clients_count'] as int? ?? 0,
+      courses: (json['courses'] as List? ?? [])
+          .map((e) => Course.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 

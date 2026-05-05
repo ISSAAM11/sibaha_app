@@ -90,6 +90,16 @@ class AcademyOwnerDashboardScreen extends StatelessWidget {
                     },
                   ),
                 ),
+                const SizedBox(height: AppSpacing.md),
+                _DashboardSection(
+                  icon: Icons.school_outlined,
+                  title: 'Courses',
+                  subtitle: 'Create and manage your academy courses',
+                  onTap: () => context.push(
+                    '/MyAcademies/${academy.id}/courses',
+                    extra: {'academy': academy},
+                  ),
+                ),
               ]),
             ),
           ),

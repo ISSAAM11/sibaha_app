@@ -18,4 +18,13 @@ class SubscriptionRepository {
 
   Future<void> removeClient(String token, int academyId, int subscriptionId) =>
       _service.removeClient(token, academyId, subscriptionId);
+
+  Future<Subscription> enrollInCourse(String token, int courseId) =>
+      _service.enrollInCourse(token, courseId);
+
+  Future<List<Subscription>> getMyEnrollments(String token) =>
+      _service.fetchMyEnrollments(token);
+
+  Future<void> deleteEnrollment(String token, int enrollmentId) =>
+      _service.deleteEnrollment(token, enrollmentId);
 }
